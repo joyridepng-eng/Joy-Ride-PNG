@@ -1,0 +1,17 @@
+node_modules/
+.expo/
+dist/
+build/
+apk-builds/
+joyride-*/
+*-archive-*/
+*-backup-*/
+*-check-*/
+*-probe-*/
+*-candidates-*/
+*-patch-*/
+*-adapter-*/
+*-metro-*/
+*-export-*/
+*.log
+.DS_Store
