@@ -1,0 +1,476 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DriverStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+  INACTIVE
+}
+
+enum VehicleStatus {
+  PENDING
+  APPROVED
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum ServiceStatus {
+  ACTIVE
+  INACTIVE
+  COMING_SOON
+}
+
+enum ServiceZoneKind {
+  CITY
+  PROVINCE
+  CUSTOM
+}
+
+enum RideType {
+  STANDARD
+  PRIVATE
+  SHARED
+  DELIVERY
+}
+
+enum RideStatus {
+  REQUESTED
+  ACCEPTED
+  DRIVER_ARRIVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_DRIVER_AVAILABLE
+}
+
+enum RideSettlementStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  DISPATCHER
+}
+
+model AdminAccount {
+  id                     String                  @id @default(cuid())
+  email                  String                  @unique
+  passwordHash           String
+  fullName               String
+  role                   AdminRole               @default(DISPATCHER)
+  isActive               Boolean                 @default(true)
+  tokenVersion           Int                     @default(0)
+  lastLoginAt            DateTime?
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  notificationInboxItems NotificationInboxItem[]
+}
+
+model RiderAccount {
+  id           String    @id @default(cuid())
+  fullName     String
+  phone        String    @unique
+  email        String?   @unique
+  passwordHash String
+  isActive     Boolean   @default(true)
+  tokenVersion Int       @default(0)
+  lastLoginAt  DateTime?
+  rides        Ride[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Province {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  slug        String
+  description String?
+  imageUrl    String?
+
+  locations    Location[]
+  destinations Destination[]
+  experiences  Experience[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Location {
+  id          Int     @id @default(autoincrement())
+  name        String
+  slug        String
+  description String?
+  imageUrl    String?
+
+  provinceId Int
+  province   Province @relation(fields: [provinceId], references: [id])
+
+  serviceStatus  ServiceStatus @default(ACTIVE)
+  launchPriority Int           @default(0)
+
+  destinations Destination[]
+  experiences  Experience[]
+
+  drivers      Driver[]
+  serviceZones ServiceZone[]
+  rides        Ride[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provinceId, slug])
+}
+
+model Destination {
+  id          Int     @id @default(autoincrement())
+  name        String
+  slug        String
+  description String?
+  imageUrl    String?
+  address     String?
+  latitude    Float?
+  longitude   Float?
+  featured    Boolean @default(false)
+  published   Boolean @default(false)
+
+  provinceId Int
+  province   Province @relation(fields: [provinceId], references: [id])
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provinceId, slug])
+}
+
+model Experience {
+  id          Int     @id @default(autoincrement())
+  title       String
+  slug        String
+  description String?
+  priceFrom   Float?
+  duration    String?
+  imageUrl    String?
+  featured    Boolean @default(false)
+  published   Boolean @default(false)
+
+  provinceId Int
+  province   Province @relation(fields: [provinceId], references: [id])
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provinceId, slug])
+}
+
+model Driver {
+  id                           String       @id @default(cuid())
+  userId                       String?
+  fullName                     String
+  phone                        String       @unique
+  email                        String?      @unique
+  licenseNumber                String?      @unique
+  licenseClass                 String?
+  licenseIssuedAt              DateTime?
+  licenseExpiresAt             DateTime?
+  dateOfBirth                  DateTime?
+  emergencyContactName         String?
+  emergencyContactPhone        String?
+  emergencyContactRelationship String?
+  status                       DriverStatus @default(PENDING)
+  approvedAt                   DateTime?
+  approvedBy                   String?
+  suspensionReason             String?
+  isOnline                     Boolean      @default(false)
+  isAvailable                  Boolean      @default(false)
+  passwordHash                 String?
+  isAuthActive                 Boolean      @default(false)
+  tokenVersion                 Int          @default(0)
+  lastLoginAt                  DateTime?
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  serviceZoneId String?
+  serviceZone   ServiceZone? @relation(fields: [serviceZoneId], references: [id])
+
+  vehicles        Vehicle[]
+  rides           Ride[]
+  locationPing    DriverLocation?
+  locationHistory DriverLocationHistory[]
+
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  notificationInboxItems NotificationInboxItem[]
+}
+
+model Vehicle {
+  id                    String        @id @default(cuid())
+  plateNumber           String        @unique
+  make                  String?
+  model                 String?
+  year                  Int?
+  color                 String?
+  seatCount             Int?
+  chassisNumber         String?       @unique
+  registrationNumber    String?
+  registrationExpiresAt DateTime?
+  status                VehicleStatus @default(PENDING)
+  approvedAt            DateTime?
+  approvedBy            String?
+  suspensionReason      String?
+
+  driverId String
+  driver   Driver @relation(fields: [driverId], references: [id], onDelete: Restrict)
+
+  rides Ride[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([driverId], where: raw("\"status\" = 'ACTIVE'"), map: "Vehicle_one_active_per_driver_key")
+}
+
+model ServiceZone {
+  id   String @id @default(cuid())
+  name String
+
+  kind     ServiceZoneKind @default(CITY)
+  zoneKind ServiceZoneKind @default(CITY)
+
+  isAirportZone     Boolean @default(false)
+  isHotelZone       Boolean @default(false)
+  isPeripheryBuffer Boolean @default(false)
+
+  status        ServiceStatus @default(ACTIVE)
+  serviceStatus ServiceStatus @default(ACTIVE)
+
+  latitude         Float?
+  longitude        Float?
+  centerLatitude   Float?
+  centerLongitude  Float?
+  radiusKm         Float?
+  coverageRadiusKm Float  @default(0)
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  drivers Driver[]
+  rides   Ride[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ride {
+  id       String     @id @default(cuid())
+  rideType RideType   @default(STANDARD)
+  status   RideStatus @default(REQUESTED)
+
+  riderName  String?
+  riderPhone String?
+
+  riderId String?
+  rider   RiderAccount? @relation(fields: [riderId], references: [id], onDelete: SetNull)
+
+  pickupLabel     String?
+  pickupAddress   String?
+  pickupLatitude  Float?
+  pickupLongitude Float?
+
+  dropoffLabel     String?
+  dropoffAddress   String?
+  dropoffLatitude  Float?
+  dropoffLongitude Float?
+
+  estimatedFare         Float?
+  quotedDistanceMeters  Int?
+  quotedDurationSeconds Int?
+  farePolicyVersion     String?
+  finalFare             Float?
+  notes                 String?
+  requestedAt           DateTime  @default(now())
+  scheduledAt           DateTime?
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  driverId String?
+  driver   Driver? @relation(fields: [driverId], references: [id])
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+
+  serviceZoneId String?
+  serviceZone   ServiceZone? @relation(fields: [serviceZoneId], references: [id])
+
+  settlement      RideSettlement?
+  locationHistory DriverLocationHistory[]
+  auditEvents     RideAuditEvent[]
+
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  notificationInboxItems NotificationInboxItem[]
+
+  @@index([riderId, requestedAt])
+}
+
+model RideSettlement {
+  id     String @id @default(cuid())
+  rideId String @unique
+
+  receiptNumber String @unique
+
+  driverId  String?
+  vehicleId String?
+
+  finalFare    Decimal @db.Decimal(10, 2)
+  driverShare  Decimal @db.Decimal(10, 2)
+  companyShare Decimal @db.Decimal(10, 2)
+
+  driverSharePercent  Decimal @default(80.00) @db.Decimal(5, 2)
+  companySharePercent Decimal @default(20.00) @db.Decimal(5, 2)
+
+  status RideSettlementStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ride Ride @relation(fields: [rideId], references: [id], onDelete: Cascade)
+}
+
+model DriverLocation {
+  id String @id @default(cuid())
+
+  driverId String @unique
+  driver   Driver @relation(fields: [driverId], references: [id])
+
+  latitude  Float
+  longitude Float
+  accuracy  Float?
+  heading   Float?
+  speed     Float?
+
+  recordedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model DriverLocationHistory {
+  id String @id @default(cuid())
+
+  driverId String
+  driver   Driver @relation(fields: [driverId], references: [id])
+
+  rideId String?
+  ride   Ride?   @relation(fields: [rideId], references: [id])
+
+  latitude  Float
+  longitude Float
+  accuracy  Float?
+  heading   Float?
+  speed     Float?
+
+  recordedAt DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([driverId, recordedAt])
+  @@index([rideId, recordedAt])
+}
+
+enum RideAuditEventType {
+  RIDE_REQUESTED
+  DRIVER_ASSIGNED
+  STATUS_CHANGED
+  SETTLEMENT_CREATED
+  SETTLEMENT_PAID
+  HISTORICAL_IMPORT
+}
+
+enum RideAuditActorType {
+  RIDER
+  DRIVER
+  ADMIN
+  SYSTEM
+}
+
+model RideAuditEvent {
+  id String @id @default(cuid())
+
+  rideId String
+  ride   Ride   @relation(fields: [rideId], references: [id], onDelete: Restrict)
+
+  eventType RideAuditEventType
+
+  previousStatus RideStatus?
+  newStatus      RideStatus?
+
+  driverId  String?
+  vehicleId String?
+
+  actorType RideAuditActorType
+  actorId   String?
+
+  notes         String?
+  metadata      Json?
+  isApproximate Boolean @default(false)
+
+  occurredAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([rideId, occurredAt])
+  @@index([driverId, occurredAt])
+  @@index([eventType, occurredAt])
+  @@index([occurredAt])
+}
+
+enum NotificationAudience {
+  ADMIN
+  DRIVER
+}
+
+enum NotificationEventType {
+  RIDE_REQUESTED
+  RIDE_ASSIGNED
+}
+
+model NotificationInboxItem {
+  id               String                @id @default(cuid())
+  audience         NotificationAudience
+  eventType        NotificationEventType
+  title            String
+  body             String
+  deduplicationKey String                @unique
+  isRead           Boolean               @default(false)
+  readAt           DateTime?
+
+  adminId String?
+  admin   AdminAccount? @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  driverId String?
+  driver   Driver? @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  rideId String?
+  ride   Ride?   @relation(fields: [rideId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([adminId, isRead, createdAt])
+  @@index([driverId, isRead, createdAt])
+  @@index([rideId, eventType])
+}

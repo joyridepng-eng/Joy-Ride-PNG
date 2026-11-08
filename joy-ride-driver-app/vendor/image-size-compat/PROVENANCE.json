@@ -1,0 +1,9 @@
+{
+  "upstreamPackage": "image-size",
+  "upstreamVersion": "2.0.3",
+  "adapter": "Synchronous filename-to-header-buffer bridge",
+  "maximumHeaderBytes": 524288,
+  "upstreamCodeModified": false,
+  "scope": "Metro synchronous asset-dimension calls",
+  "adapterSha256": "6be29ebfbc9ab005385144d6b4422dbd4ea3bd626a208fd090070f0efc4d7986"
+}

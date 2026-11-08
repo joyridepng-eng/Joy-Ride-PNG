@@ -1,0 +1,46 @@
+name: Admin CI
+on:
+  push: null
+  pull_request: null
+  workflow_dispatch: null
+permissions:
+  contents: read
+jobs:
+  checks:
+    name: TypeScript and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Check source encoding and conflict markers
+        run: node tools/verify-source-hygiene.cjs
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Check TypeScript
+        run: npx tsc --noEmit
+      - name: Run lint
+        run: npx eslint . --ignore-pattern "backups/**" --max-warnings 0
+      - name: 'Regression check: verify-admin-discipline-print.cjs'
+        run: node tools/verify-admin-discipline-print.cjs
+      - name: 'Regression check: verify-fleet-marker-motion.cjs'
+        run: node tools/verify-fleet-marker-motion.cjs
+      - name: 'Regression check: verify-fleet-visibility.cjs'
+        run: node tools/verify-fleet-visibility.cjs
+      - name: Verify patched URI decoder
+        run: node tools/verify-uri-decoder.cjs
+      - name: Verify PostCSS compatibility
+        run: node tools/verify-postcss-compat.cjs
+      - name: Verify image-size compatibility
+        run: node tools/verify-image-size-compat.cjs
+      - name: Verify patched UUID consumer compatibility
+        run: node tools/verify-uuid-compat.cjs

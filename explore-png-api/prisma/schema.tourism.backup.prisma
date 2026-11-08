@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DriverStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+  INACTIVE
+}
+
+enum VehicleStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+  INACTIVE
+}
+
+enum ServiceStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ServiceZoneKind {
+  CITY
+  PROVINCE
+  CUSTOM
+}
+
+enum RideType {
+  STANDARD
+  PRIVATE
+  SHARED
+  DELIVERY
+}
+
+enum RideStatus {
+  REQUESTED
+  ACCEPTED
+  ARRIVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Driver {
+  id            Int          @id @default(autoincrement())
+  fullName      String
+  phone         String       @unique
+  email         String?      @unique
+  licenseNumber String?
+  status        DriverStatus @default(PENDING)
+
+  vehicles      Vehicle[]
+  rides         Ride[]
+  locations     DriverLocation[]
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Vehicle {
+  id             Int           @id @default(autoincrement())
+  plateNumber    String        @unique
+  make           String?
+  model          String?
+  year           Int?
+  color          String?
+  status         VehicleStatus @default(PENDING)
+
+  driverId       Int?
+  driver         Driver?       @relation(fields: [driverId], references: [id])
+
+  rides          Ride[]
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model ServiceZone {
+  id          Int             @id @default(autoincrement())
+  name        String
+  kind        ServiceZoneKind @default(CITY)
+  status      ServiceStatus   @default(ACTIVE)
+
+  latitude    Float?
+  longitude   Float?
+  radiusKm    Float?
+
+  rides       Ride[]
+
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model Ride {
+  id              Int        @id @default(autoincrement())
+  rideType        RideType   @default(STANDARD)
+  status          RideStatus @default(REQUESTED)
+
+  pickupAddress   String?
+  pickupLatitude  Float?
+  pickupLongitude Float?
+
+  dropoffAddress   String?
+  dropoffLatitude  Float?
+  dropoffLongitude Float?
+
+  passengerName   String?
+  passengerPhone  String?
+
+  estimatedFare   Float?
+  finalFare       Float?
+
+  driverId        Int?
+  driver          Driver?    @relation(fields: [driverId], references: [id])
+
+  vehicleId       Int?
+  vehicle         Vehicle?   @relation(fields: [vehicleId], references: [id])
+
+  serviceZoneId   Int?
+  serviceZone     ServiceZone? @relation(fields: [serviceZoneId], references: [id])
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model DriverLocation {
+  id          Int      @id @default(autoincrement())
+
+  driverId    Int
+  driver      Driver   @relation(fields: [driverId], references: [id])
+
+  latitude    Float
+  longitude   Float
+  heading     Float?
+  speed       Float?
+
+  recordedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([driverId])
+}

@@ -1,0 +1,27 @@
+name: Rider feedback contracts
+on:
+  push:
+    branches: [master, main, feature/rider-feedback]
+  pull_request:
+    branches: [master, main]
+permissions:
+  contents: read
+jobs:
+  feedback-contracts:
+    name: Offline Rider feedback contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Run offline Rider feedback contracts
+        run: node tools/verify-rider-feedback.cjs

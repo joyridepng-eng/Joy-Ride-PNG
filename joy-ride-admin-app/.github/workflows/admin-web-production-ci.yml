@@ -1,0 +1,46 @@
+name: Admin production web
+on:
+  push:
+    branches: [master, main, feature/admin-feedback-emergencies]
+  pull_request:
+    branches: [master, main]
+permissions:
+  contents: read
+jobs:
+  production-web:
+    name: Production contracts and key-free web export
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      EXPO_NO_DOTENV: "1"
+      EXPO_NO_TELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install locked dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts --include=dev --no-audit --no-fund
+      - name: TypeScript and changed-code lint
+        run: |
+          npx tsc --noEmit
+          npx eslint constants/api.web.ts components/emergency-map/google.web.ts config/with-production-web.cjs tools/production-web-core.cjs tools/build-production-web.cjs tools/verify-production-web.cjs --max-warnings 0
+      - name: Production and existing Safety Test regressions
+        run: |
+          node tools/verify-production-web.cjs
+          node tools/verify-admin-web-config.cjs
+          node tools/verify-admin-google-map.cjs
+          node tools/verify-admin-web.cjs
+          node tools/verify-admin-safety.cjs
+          node tools/verify-safety-test-config.cjs
+          node tools/verify-pilot-production.cjs
+      - name: Export production website with synthetic origin and no key
+        env:
+          EXPO_PUBLIC_JOYRIDE_WEB_PRODUCTION: "1"
+          EXPO_PUBLIC_API_BASE_URL: "https://explore-png-api.onrender.com"
+          EXPO_PUBLIC_JOYRIDE_WEB_ORIGIN: "https://joyride-ci.invalid"
+        run: node tools/build-production-web.cjs --key-free-check

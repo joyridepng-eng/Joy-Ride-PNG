@@ -1,0 +1,25 @@
+name: Safety Test configuration CI
+on:
+  pull_request:
+    branches: [master, main]
+  push:
+    branches: [feature/rider-feedback]
+permissions:
+  contents: read
+jobs:
+  safety-test-config:
+    name: Verify isolated test configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node tools/verify-safety-test-config.cjs
+      - run: npx --no-install tsc --noEmit
+      - run: npx --no-install eslint app.config.js constants/api.ts config/with-safety-test.cjs tools/verify-safety-test-config.cjs --max-warnings=0

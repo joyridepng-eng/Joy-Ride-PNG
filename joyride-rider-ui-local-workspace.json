@@ -1,0 +1,16 @@
+{
+  "sourceCommit": "4369fb768d2f6bd0568bc517716a77b6b1943c83",
+  "project": "C:\\jr-rui-xeI2GG\\d",
+  "privateFolder": "C:\\jr-rui-xeI2GG\\p",
+  "sdk": "C:\\jr-v1qPMX\\s",
+  "javaHome": "C:\\Program Files\\Android\\Android Studio\\jbr",
+  "state": "native-configured",
+  "packageName": "com.explorepng.joyriderider",
+  "versionName": "1.1.0",
+  "channel": "joyride-pilot-production-v1",
+  "certificateSha256": "CF6F81466045150601FC0BD6EA89EEE3F661BFAC94A4B6331F0C239C9C9F80A0",
+  "certificateVerified": true,
+  "plannedVersionCode": 11,
+  "versionCode": 11,
+  "expoUpdatesEnabled": false
+}

@@ -1,0 +1,106 @@
+=== joy-ride-admin-app API REFERENCES ===
+app\(tabs)\assign-driver.tsx:55: const response = await adminFetch(`/rides`);
+app\(tabs)\assign-driver.tsx:111: const response = await adminFetch(
+app\(tabs)\assign-driver.tsx:112: `/rides/${selectedRide.id}/assign-driver`,
+app\(tabs)\index.tsx:60: onPress={() => router.push("/assign-driver")}
+app\(tabs)\index.tsx:80: onPress={() => router.push("/settlements")}
+app\(tabs)\requested-rides.tsx:48: const response = await adminFetch(`/rides`);
+app\(tabs)\ride-operations.tsx:65: const response = await adminFetch(`/rides`);
+app\(tabs)\settlements.tsx:62: const response = await adminFetch(`/rides`);
+app\(tabs)\settlements.tsx:95: const response = await adminFetch(`/rides/${rideId}/settlement/paid`, {
+app\(tabs)\_layout.tsx:65: name="assign-driver"
+services\admin-active-rides.ts:44: const response = await adminFetch(`/rides`, {
+services\admin-auth.ts:88: const response = await fetch(`${API_BASE_URL}/admin-auth/login`, {
+services\admin-auth.ts:144: export async function adminFetch(
+services\admin-auth.ts:159: const response = await fetch(`${API_BASE_URL}${normalizedPath}`, {
+services\admin-driving-route.ts:25: const response = await fetch(
+services\fleet-locations.ts:22: const response = await adminFetch(`/driver-locations/fleet`, {
+services\fleet-registry.ts:104: const response = await adminFetch("/drivers", {
+services\fleet-registry.ts:121: const response = await adminFetch("/drivers", {
+services\fleet-registry.ts:137: const response = await adminFetch(
+services\fleet-registry.ts:138: `/drivers/${encodeURIComponent(driverId)}/status`,
+services\fleet-registry.ts:156: const response = await adminFetch("/vehicles", {
+services\fleet-registry.ts:173: const response = await adminFetch("/vehicles", {
+services\fleet-registry.ts:189: const response = await adminFetch(
+services\fleet-registry.ts:190: `/vehicles/${encodeURIComponent(vehicleId)}/status`,
+
+=== joy-ride-driver-app API REFERENCES ===
+app\(tabs)\assigned-ride.tsx:197: const response = await fetch(`${API_BASE_URL}/rides`);
+app\(tabs)\assigned-ride.tsx:254: const response = await fetch(
+app\(tabs)\assigned-ride.tsx:255: `${API_BASE_URL}/rides/${assignedRide.id}/status`,
+app\(tabs)\assigned-ride.web.tsx:50: const response = await fetch(
+app\(tabs)\assigned-ride.web.tsx:51: `${API_BASE_URL}/rides/driver/${encodeURIComponent(
+app\(tabs)\availability.tsx:38: const response = await fetch(`${API_BASE_URL}/drivers/${driverId.trim()}/availability`, {
+app\(tabs)\availability.tsx:74: const response = await fetch(
+app\(tabs)\availability.tsx:75: `${API_BASE_URL}/drivers/${driverId.trim()}`,
+hooks\use-driver-location-tracking.ts:80: const response = await fetch(
+hooks\use-driver-location-tracking.ts:81: `${API_BASE_URL}/driver-locations/upsert`,
+hooks\use-driving-route.ts:85: const response = await fetch(
+
+=== joy-ride-rider-app API REFERENCES ===
+app\(tabs)\receipt.tsx:79: const response = await fetch(
+app\(tabs)\receipt.tsx:80: `${API_BASE_URL}/rides/${rideId.trim()}/settlement`,
+app\(tabs)\request-ride.tsx:317: const response = await fetch(
+app\(tabs)\request-ride.tsx:318: `${API_BASE_URL}/rides`,
+app\(tabs)\ride-status.tsx:83: const response = await fetch(
+app\(tabs)\ride-status.tsx:84: `${API_BASE_URL}/rides/${cleanRideId}`,
+hooks\use-driving-route.ts:193: const response = await fetch(
+hooks\use-ride-driver-location.ts:133: const response = await fetch(
+hooks\use-ride-driver-location.ts:134: `${API_BASE_URL}/rides/${encodeURIComponent(
+
+=== BACKEND CONTROLLER ROUTES ===
+src\admin-auth\admin-auth.controller.ts:13: @Controller('admin-auth')
+src\admin-auth\admin-auth.controller.ts:17: @Post('login')
+src\admin-auth\admin-auth.controller.ts:19: @UseGuards(ThrottlerGuard)
+src\driver-locations\driver-locations.controller.ts:16: @Controller('driver-locations')
+src\driver-locations\driver-locations.controller.ts:22: @Get('fleet')
+src\driver-locations\driver-locations.controller.ts:23: @UseGuards(AdminLocationApiKeyGuard)
+src\driver-locations\driver-locations.controller.ts:28: @Get('history')
+src\driver-locations\driver-locations.controller.ts:29: @UseGuards(DriverLocationApiKeyGuard)
+src\driver-locations\driver-locations.controller.ts:40: @Post('upsert')
+src\driver-locations\driver-locations.controller.ts:41: @UseGuards(DriverLocationApiKeyGuard)
+src\drivers\drivers.controller.ts:21: @Controller('drivers')
+src\drivers\drivers.controller.ts:25: @Post()
+src\drivers\drivers.controller.ts:26: @UseGuards(AdminApiKeyGuard)
+src\drivers\drivers.controller.ts:31: @Get()
+src\drivers\drivers.controller.ts:32: @UseGuards(AdminApiKeyGuard)
+src\drivers\drivers.controller.ts:37: @Get('nearby')
+src\drivers\drivers.controller.ts:38: @UseGuards(AdminApiKeyGuard)
+src\drivers\drivers.controller.ts:43: @Patch(':id/availability')
+src\drivers\drivers.controller.ts:44: @UseGuards(DriverSelfApiKeyGuard)
+src\drivers\drivers.controller.ts:52: @Get(':id')
+src\drivers\drivers.controller.ts:53: @UseGuards(DriverSelfApiKeyGuard)
+src\drivers\drivers.controller.ts:58: @Patch(':id/status')
+src\drivers\drivers.controller.ts:59: @UseGuards(AdminApiKeyGuard)
+src\drivers\drivers.controller.ts:64: @Patch(':id')
+src\drivers\drivers.controller.ts:65: @UseGuards(AdminApiKeyGuard)
+src\drivers\drivers.controller.ts:70: @Delete(':id')
+src\drivers\drivers.controller.ts:71: @UseGuards(AdminApiKeyGuard)
+src\rides\rides.controller.ts:17: @Controller('rides')
+src\rides\rides.controller.ts:18: @UseGuards(AdminApiKeyGuard)
+src\rides\rides.controller.ts:22: @Post()
+src\rides\rides.controller.ts:27: @Get()
+src\rides\rides.controller.ts:42: @Get('driver/:driverId/active')
+src\rides\rides.controller.ts:47: @Get(':id/location')
+src\rides\rides.controller.ts:51: @Get(':id/settlement')
+src\rides\rides.controller.ts:56: @Patch(':id/settlement/paid')
+src\rides\rides.controller.ts:61: @Get(':id')
+src\rides\rides.controller.ts:66: @Patch(':id/assign-driver')
+src\rides\rides.controller.ts:71: @Patch(':id/status')
+src\routing\routing.controller.ts:9: @Controller('routing')
+src\routing\routing.controller.ts:15: @Get('driving')
+src\service-zones\service-zones.controller.ts:6: @Controller('service-zones')
+src\service-zones\service-zones.controller.ts:10: @Post()
+src\service-zones\service-zones.controller.ts:15: @Get()
+src\service-zones\service-zones.controller.ts:20: @Get(':id')
+src\service-zones\service-zones.controller.ts:25: @Patch(':id')
+src\service-zones\service-zones.controller.ts:30: @Delete(':id')
+src\vehicles\vehicles.controller.ts:19: @Controller('vehicles')
+src\vehicles\vehicles.controller.ts:20: @UseGuards(AdminApiKeyGuard)
+src\vehicles\vehicles.controller.ts:24: @Post()
+src\vehicles\vehicles.controller.ts:29: @Get()
+src\vehicles\vehicles.controller.ts:34: @Get(':id')
+src\vehicles\vehicles.controller.ts:39: @Patch(':id/driver')
+src\vehicles\vehicles.controller.ts:47: @Patch(':id/status')
+src\vehicles\vehicles.controller.ts:52: @Patch(':id')
+src\vehicles\vehicles.controller.ts:57: @Delete(':id')

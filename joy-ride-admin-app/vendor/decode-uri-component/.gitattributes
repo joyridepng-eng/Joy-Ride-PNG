@@ -1,0 +1,2 @@
+# Preserve audited source bytes and integrity fingerprints.
+* -text -filter -working-tree-encoding

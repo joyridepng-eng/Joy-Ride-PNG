@@ -1,0 +1,13 @@
+# Admin Safety Test browser review
+
+The browser inbox emergency detail now displays Driver contact and vehicle information above a Google map. A fixed red car marks the saved incident; a separate blue/grey car marks recent/uncertain Driver-reported GPS. Source/time/accuracy and resolution polling behaviour remain from the tested emergency feature. Missing points are not invented and current registrations are not represented as proof of the incident vehicle.
+
+Browser safety requests use the browser cache policy without the author-supplied Cache-Control header rejected by API CORS. Native request code is preserved. The web-only config wrapper requires EXPO_PUBLIC_JOYRIDE_WEB_SAFETY_TEST=1, safety-test variant and the exact isolated API URL; it skips native key requirements and refuses use during EAS native builds. Other app configuration follows the existing native wrappers unchanged. The browser API module refuses an implicit production/default web build.
+
+The separate runtime browser Maps key is read through hidden PowerShell input, trimmed, and held in server memory. It is not compiled into source/export. It is visible to the browser/Google SDK by design and must have Websites restrictions for http://localhost:8081 and http://localhost:8081/* and Maps JavaScript API only. The server binds 127.0.0.1:8081, rejects other Host/method values, verifies an export receipt, uses no-store responses and an origin-only referrer policy. This is local Safety Test tooling, not public hosting. DEMO_MAP_ID is for testing; production web deployment needs separately reviewed configuration.
+
+The additive web CI job tests TypeScript/lint, native configuration and safety regressions, browser requests, Google loader/marker contracts and a key-free Expo web export. It does not contact Google or a live database. Package versions, lockfile, EAS settings, existing CI jobs, native API and native map files are preserved.
+
+The user reported successful isolated laptop/Driver handover on 5 October 2026; see the release checklist. After this patch is committed and CI passes, build a fresh reviewed export and repeat that flow against the committed revision. Keep all PRs Draft. No production migration/deployment or operational rollback approval is granted by these tests.
+
+To serve a verified export after review, use tools/Start-Admin-Safety-Test-Web.ps1 -ExportFolder with the absolute export-folder path. It must contain dist/ and web-receipt.json from tools/verify-admin-web-export.cjs. Stop any older localhost:8081 server before starting it. Refresh logs the in-memory browser session out. Joseph and Joyce use separate browser profiles and existing private TEST passwords.

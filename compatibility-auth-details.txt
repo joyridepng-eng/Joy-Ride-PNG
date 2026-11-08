@@ -1,0 +1,894 @@
+=== .\explore-png-api\src\rides\rides.controller.ts ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:13:import { CreateRideDto } from './dto/create-ride.dto';
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:14:import { UpdateRideStatusDto } from './dto/update-ride-status.dto';
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:15:import { RidesService } from './rides.service';
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:16:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:17:@Controller('rides')
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:18:@UseGuards(AdminApiKeyGuard)
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:19:export class RidesController {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:20:  constructor(private readonly ridesService: RidesService) {}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:21:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:22:  @Post()
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:23:  create(@Body() dto: CreateRideDto) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:24:    return this.ridesService.create(dto);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:25:  }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:26:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:27:  @Get()
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:28:  findAll(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:29:    @Query('status') status?: string,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:30:    @Query('locationId') locationId?: string,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:31:    @Query('serviceZoneId') serviceZoneId?: string,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:32:    @Query('driverId') driverId?: string,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:33:  ) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:34:    return this.ridesService.findAll({
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:35:      status,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:36:      locationId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:37:      serviceZoneId,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:38:      driverId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:39:    });
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:40:  }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:41:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:42:  @Get('driver/:driverId/active')
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:43:  findActiveDriverRide(@Param('driverId') driverId: string) {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:44:    return this.ridesService.findActiveDriverRide(driverId);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:45:  }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:46:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:47:  @Get(':id/location')
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:48:  getCurrentLocation(@Param('id') id: string) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:49:    return this.ridesService.getCurrentLocation(id);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:50:  }
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:51:  @Get(':id/settlement')
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:52:  getSettlement(@Param('id') id: string) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:53:    return this.ridesService.getSettlement(id);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:54:  }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:55:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:56:  @Patch(':id/settlement/paid')
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:57:  markSettlementPaid(@Param('id') id: string) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:58:    return this.ridesService.markSettlementPaid(id);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:59:  }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:60:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:61:  @Get(':id')
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:62:  findOne(@Param('id') id: string) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:63:    return this.ridesService.findOne(id);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:64:  }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:65:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:66:  @Patch(':id/assign-driver')
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:67:  assignDriver(@Param('id') id: string, @Body() dto: AssignDriverDto) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:68:    return this.ridesService.assignDriver(id, dto);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:69:  }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:70:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:71:  @Patch(':id/status')
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:72:  updateStatus(@Param('id') id: string, @Body() dto: UpdateRideStatusDto) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:73:    return this.ridesService.updateStatus(id, dto);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:74:  }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\rides\rides.controller.ts:75:}
+
+=== .\explore-png-api\src\common\guards\admin-api-key.guard.ts ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:20:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:21:  canActivate(context: ExecutionContext): boolean | Promise<boolean> {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:22:    const request = context.switchToHttp().getRequest<Request>();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:23:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:24:    const authorization = request.header('authorization');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:25:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:26:    if (!authorization?.startsWith('Bearer ')) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:27:      throw new UnauthorizedException('Admin authentication is required');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:28:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:29:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:30:    const providedCredential = authorization.slice('Bearer '.length).trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:31:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:32:    const configuredKey = this.config
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:33:      .get<string>('ADMIN_LOCATION_API_KEY')
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:34:      ?.trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:35:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:36:    if (!providedCredential || !configuredKey) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:37:      throw new UnauthorizedException('Admin authentication failed');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:38:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:39:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:40:    const providedBuffer = Buffer.from(providedCredential);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:41:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:42:    const configuredBuffer = Buffer.from(configuredKey);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\common\guards\admin-api-key.guard.ts:43:
+
+=== .\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:14:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:15:  canActivate(context: ExecutionContext): boolean {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:16:    const request = context.switchToHttp().getRequest<Request>();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:17:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:18:    const authorization = request.header('authorization');
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:19:    const headerDriverId = request.header('x-driver-id')?.trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:20:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:21:    const routeId = request.params?.id;
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:22:    const routeDriverId =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:23:      typeof routeId === 'string' ? routeId.trim() : undefined;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:24:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:25:    if (
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:26:      !authorization?.startsWith('Bearer ') ||
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:27:      !headerDriverId ||
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:28:      !routeDriverId
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:29:    ) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:30:      throw new UnauthorizedException('Driver authentication is required');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:31:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:32:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:33:    if (headerDriverId !== routeDriverId) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:34:      throw new UnauthorizedException('Driver authentication failed');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:35:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:36:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:37:    const providedKey = authorization.slice('Bearer '.length).trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:38:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:39:    const configuredKey = this.config
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:40:      .get<string>('DRIVER_LOCATION_API_KEY')
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:41:      ?.trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:42:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:43:    if (!providedKey || !configuredKey) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:44:      throw new UnauthorizedException('Driver authentication failed');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:45:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:46:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:47:    const providedBuffer = Buffer.from(providedKey);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:48:    const configuredBuffer = Buffer.from(configuredKey);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:49:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\drivers\guards\driver-self-api-key.guard.ts:50:    if (
+
+=== .\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:13:  constructor(private readonly config: ConfigService) {}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:14:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:15:  canActivate(context: ExecutionContext): boolean {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:16:    const request = context.switchToHttp().getRequest<Request>();
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:17:    const authorization = request.header('authorization');
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:18:    const driverId = request.header('x-driver-id');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:19:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:20:    if (!authorization?.startsWith('Bearer ') || !driverId) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:21:      throw new UnauthorizedException(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:22:        'Driver location authentication is required',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:23:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:24:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:25:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:26:    const providedKey = authorization.slice('Bearer '.length).trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:27:    const expectedKey = this.config.getOrThrow<string>(
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:28:      'DRIVER_LOCATION_API_KEY',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:29:    );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:30:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:31:    const providedBuffer = Buffer.from(providedKey);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:32:    const expectedBuffer = Buffer.from(expectedKey);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:33:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:34:    if (
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:35:      providedBuffer.length !== expectedBuffer.length ||
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:36:      !timingSafeEqual(providedBuffer, expectedBuffer)
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:37:    ) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\driver-location-api-key.guard.ts:38:      throw new UnauthorizedException('Invalid driver location credentials');
+
+=== .\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:20:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:21:  canActivate(context: ExecutionContext): boolean | Promise<boolean> {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:22:    const request = context.switchToHttp().getRequest<Request>();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:23:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:24:    const authorization = request.header('authorization');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:25:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:26:    if (!authorization?.startsWith('Bearer ')) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:27:      throw new UnauthorizedException(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:28:        'Admin location authentication is required',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:29:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:30:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:31:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:32:    const providedCredential = authorization.slice('Bearer '.length).trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:33:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:34:    const configuredKey = this.config
+> C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:35:      .get<string>('ADMIN_LOCATION_API_KEY')
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:36:      ?.trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:37:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:38:    if (!providedCredential || !configuredKey) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:39:      throw new UnauthorizedException('Admin location authentication failed');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:40:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:41:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:42:    const providedBuffer = Buffer.from(providedCredential);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:43:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:44:    const configuredBuffer = Buffer.from(configuredKey);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\explore-png-api\src\driver-locations\guards\admin-location-api-key.guard.ts:45:
+
+=== .\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:44:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:45:const ACTIVE_DRIVER_STATUSES = ["ACCEPTED", "DRIVER_ARRIVED", "IN_PROGRESS"];
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:46:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:47:export default function AssignedRideScreen() {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:48:  const driverId = "cmqxiib050000dcrih388jp0a";
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:49:  const [assignedRide, setAssignedRide] = useState<Ride | null>(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:50:  const [message, setMessage] = useState("");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:51:  const [isLoading, setIsLoading] = useState(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:52:  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:53:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:54:  const trackingEnabled =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:55:    Platform.OS !== "web" &&
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:56:    assignedRide !== null &&
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:57:    ACTIVE_DRIVER_STATUSES.includes(assignedRide.status);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:58:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:61:    errorMessage: trackingError,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:62:    latestLocation,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:63:    isTracking,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:64:  } = useDriverLocationTracking({
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:65:    driverId,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:66:    rideId: assignedRide?.id,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:67:    enabled: trackingEnabled,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:68:  });
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:69:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:70:  const driverMapLocation = useMemo(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:71:    () =>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:72:      latestLocation
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:73:        ? {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:74:            latitude: latestLocation.latitude,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:75:            longitude: latestLocation.longitude,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:76:            accuracy: latestLocation.accuracy,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:193:        setMessage("");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:194:        setAssignedRide(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:195:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:196:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:197:      const response = await fetch(`${API_BASE_URL}/rides`);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:198:      const data = await response.json();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:199:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:200:      if (!response.ok) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:201:        if (!isAutoRefresh) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:202:          setMessage(data.message || "Could not load rides.");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:203:        }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:204:        return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:205:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:206:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:207:      const rides = Array.isArray(data) ? data : [];
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:208:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:209:      const matchedRide =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:210:        rides.find(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:211:          (ride: Ride) =>
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:212:            ride.driver?.id === driverId.trim() &&
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:213:            ACTIVE_DRIVER_STATUSES.includes(ride.status),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:214:        ) || null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:215:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:216:      if (!matchedRide) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:217:        setAssignedRide(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:218:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:219:        if (!isAutoRefresh) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:220:          setMessage("No active assigned ride found for this driver.");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:221:        }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:222:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:250:    try {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:251:      setIsUpdatingStatus(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:252:      setMessage("");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:253:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:254:      const response = await fetch(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:255:        `${API_BASE_URL}/rides/${assignedRide.id}/status`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:256:        {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:257:          method: "PATCH",
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:258:          headers: {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:259:            "Content-Type": "application/json",
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:260:          },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:261:          body: JSON.stringify({
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:262:            status: nextStatus,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:263:          }),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:264:        },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:265:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:266:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:267:      const data = await response.json();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx:268:
+
+=== .\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:32:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:33:const ACTIVE_DRIVER_STATUSES = ["ACCEPTED", "DRIVER_ARRIVED", "IN_PROGRESS"];
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:34:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:35:export default function AssignedRideWebScreen() {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:36:  const driverId = "cmqxiib050000dcrih388jp0a";
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:37:  const [assignedRide, setAssignedRide] = useState<Ride | null>(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:38:  const [message, setMessage] = useState("");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:39:  const [isLoading, setIsLoading] = useState(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:40:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:41:  async function findAssignedRide() {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:42:    const normalizedDriverId = driverId.trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:43:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:44:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:45:    try {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:46:      setIsLoading(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:47:      setMessage("");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:48:      setAssignedRide(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:49:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:50:      const response = await fetch(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:51:        `${API_BASE_URL}/rides/driver/${encodeURIComponent(
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:52:          normalizedDriverId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:53:        )}/active`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:54:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:55:      const data: unknown = await response.json();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:56:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:57:      if (!response.ok) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:58:        const errorMessage =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:59:          typeof data === "object" &&
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:60:          data !== null &&
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:61:          "message" in data &&
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx:62:          typeof data.message === "string"
+
+=== .\joy-ride-driver-app\app\(tabs)\availability.tsx ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:10:  isOnline: boolean;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:11:  isAvailable: boolean;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:12:};
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:13:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:14:const DRIVER_API_KEY =
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:15:  process.env.EXPO_PUBLIC_DRIVER_LOCATION_API_KEY?.trim() ?? '';
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:16:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:17:export default function AvailabilityScreen() {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:18:  const driverId = 'cmqxiib050000dcrih388jp0a';
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:19:  const [driver, setDriver] = useState<Driver | null>(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:20:  const [message, setMessage] = useState('');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:21:  const [isLoading, setIsLoading] = useState(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:22:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:23:  async function updateAvailability(isOnline: boolean, isAvailable?: boolean) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:24:try {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:25:      setIsLoading(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:26:      setMessage('');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:27:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:28:      if (!DRIVER_API_KEY) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:29:        setMessage('Driver authentication is not configured.');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:30:        return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:31:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:32:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:33:      const body =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:34:        isAvailable === undefined
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:35:          ? { isOnline }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:36:          : { isOnline, isAvailable };
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:37:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:38:      const response = await fetch(`${API_BASE_URL}/drivers/${driverId.trim()}/availability`, {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:39:        method: 'PATCH',
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:40:        headers: {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:41:          'Content-Type': 'application/json',
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:42:          Authorization: `Bearer ${DRIVER_API_KEY}`,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:43:          'X-Driver-Id': driverId.trim(),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:44:        },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:45:        body: JSON.stringify(body),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:46:      });
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:47:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:48:      const data = await response.json();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:49:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:50:      if (!response.ok) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:51:        setMessage(data.message || 'Could not update availability.');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:52:        return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:53:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:65:try {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:66:      setIsLoading(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:67:      setMessage('');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:68:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:69:      if (!DRIVER_API_KEY) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:70:        setMessage('Driver authentication is not configured.');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:71:        return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:72:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:73:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:74:      const response = await fetch(
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:75:        `${API_BASE_URL}/drivers/${driverId.trim()}`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:76:        {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:77:          headers: {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:78:            Accept: 'application/json',
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:79:            Authorization: `Bearer ${DRIVER_API_KEY}`,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:80:            'X-Driver-Id': driverId.trim(),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:81:          },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:82:        },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:83:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:84:      const data = await response.json();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:85:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:86:      if (!response.ok) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:87:        setMessage(data.message || 'Could not load driver.');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:88:        return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:89:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\app\(tabs)\availability.tsx:90:
+
+=== .\joy-ride-driver-app\hooks\use-driver-location-tracking.ts ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:24:  timestamp: number;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:25:};
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:26:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:27:type UseDriverLocationTrackingOptions = {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:28:  driverId: string;
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:29:  rideId?: string;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:30:  enabled: boolean;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:31:};
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:32:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:33:export function useDriverLocationTracking({
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:34:  driverId,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:35:  rideId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:36:  enabled,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:37:}: UseDriverLocationTrackingOptions) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:38:  const [status, setStatus] = useState<TrackingStatus>("idle");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:39:  const [errorMessage, setErrorMessage] = useState("");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:40:  const [latestLocation, setLatestLocation] = useState<LatestLocation | null>(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:41:    null,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:42:  );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:43:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:44:  const isPostingRef = useRef(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:45:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:47:    let cancelled = false;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:48:    let nativeSubscription: Location.LocationSubscription | null = null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:49:    let webWatchId: number | null = null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:50:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:51:    const normalizedDriverId = driverId.trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:52:    const apiKey =
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:53:      process.env.EXPO_PUBLIC_DRIVER_LOCATION_API_KEY?.trim() ?? "";
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:54:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:55:    async function submitLocation(sample: LocationSample) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:56:      if (cancelled || isPostingRef.current) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:57:        return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:58:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:59:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:60:      isPostingRef.current = true;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:61:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:62:      try {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:63:        const payload = {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:64:          driverId: normalizedDriverId,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:65:          rideId: rideId || undefined,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:66:          latitude: sample.latitude,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:67:          longitude: sample.longitude,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:68:          accuracy: sample.accuracy ?? undefined,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:69:          heading:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:70:            sample.heading !== null && sample.heading >= 0
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:71:              ? sample.heading
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:72:              : undefined,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:73:          speed:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:74:            sample.speed !== null && sample.speed >= 0
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:75:              ? sample.speed
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:76:              : undefined,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:77:          recordedAt: new Date(sample.timestamp).toISOString(),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:78:        };
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:79:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:80:        const response = await fetch(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:81:          `${API_BASE_URL}/driver-locations/upsert`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:82:          {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:83:            method: "POST",
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:84:            headers: {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:85:              "Content-Type": "application/json",
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:86:              Authorization: `Bearer ${apiKey}`,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:87:              "X-Driver-Id": normalizedDriverId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:88:            },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:89:            body: JSON.stringify(payload),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:90:          },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:91:        );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:92:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:93:        const data = await response.json().catch(() => null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:94:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:95:        if (!response.ok) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:96:          if (response.status === 401) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:97:            throw new Error(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:232:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:233:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:234:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:235:    function startTracking() {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:236:      if (!enabled || !normalizedDriverId) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:237:        setStatus("idle");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:238:        setErrorMessage("");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:239:        setLatestLocation(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:240:        return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:241:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:242:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:243:      if (!apiKey) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:244:        setStatus("error");
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:245:        setErrorMessage(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:246:          "Driver location authentication is required. Restart Expo after configuring the API key.",
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:270:      if (Platform.OS !== "web") {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:271:        nativeSubscription?.remove();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:272:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:273:    };
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:274:  }, [driverId, enabled, rideId]);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:275:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:276:  return {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:277:    status,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:278:    errorMessage,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:279:    latestLocation,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:280:    isTracking: status === "tracking",
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:281:  };
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-driver-app\hooks\use-driver-location-tracking.ts:282:}
+
+=== .\joy-ride-rider-app\app\(tabs)\request-ride.tsx ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:71:  const [selectionMode, setSelectionMode] =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:72:    useState<SelectionMode>('pickup');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:73:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:74:  const [message, setMessage] = useState('');
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:75:  const [createdRideId, setCreatedRideId] = useState('');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:76:  const [isSubmitting, setIsSubmitting] = useState(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:77:  const [isLocating, setIsLocating] = useState(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:78:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:79:  async function ensureLocationPermission() {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:80:    const current =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:81:      await Location.getForegroundPermissionsAsync();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:82:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:83:    if (current.status === 'granted') {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:84:      return true;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:85:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:311:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:312:    try {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:313:      setIsSubmitting(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:314:      setMessage('');
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:315:      setCreatedRideId('');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:316:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:317:      const response = await fetch(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:318:        `${API_BASE_URL}/rides`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:319:        {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:320:          method: 'POST',
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:321:          headers: {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:322:            'Content-Type': 'application/json',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:323:          },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:324:          body: JSON.stringify({
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:325:            rideType: 'STANDARD',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:326:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:327:            riderName: riderName.trim(),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:328:            riderPhone,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:329:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:330:            pickupLabel: pickupLabel.trim(),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:331:            pickupAddress: pickupAddress.trim(),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:366:        );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:367:        return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:368:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:369:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:370:      setCreatedRideId(data.id);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:371:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:372:      setMessage(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:373:        `Ride request submitted successfully.\n\nPickup: ${data.pickupLabel}\nDrop-off: ${data.dropoffLabel}\nStatus: ${data.status}`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:374:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:375:    } catch {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:376:      setMessage(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:377:        `Could not connect to the backend at ${API_BASE_URL}.`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:378:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:379:    } finally {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:380:      setIsSubmitting(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:637:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:638:      {message ? (
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:639:        <View
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:640:          style={
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:641:            createdRideId
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:642:              ? styles.successBox
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:643:              : styles.messageBox
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:644:          }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:645:        >
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:646:          <Text
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:647:            style={
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:648:              createdRideId
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:649:                ? styles.successText
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:650:                : styles.messageText
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:651:            }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:652:          >
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:653:            {message}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:654:          </Text>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:655:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:656:          {createdRideId ? (
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:657:            <TouchableOpacity
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:658:              style={styles.statusButton}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:659:              onPress={() =>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:660:                router.push({
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:661:                  pathname: '/ride-status',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:662:                  params: {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:663:                    rideId: createdRideId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:664:                  },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:665:                })
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:666:              }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:667:            >
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:668:              <Text style={styles.statusButtonText}>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:669:                Track My Ride
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:670:              </Text>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:671:            </TouchableOpacity>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:672:          ) : null}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\request-ride.tsx:673:        </View>
+
+=== .\joy-ride-rider-app\app\(tabs)\ride-status.tsx ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:46:const ACTIVE_REFRESH_INTERVAL_MS = 5000;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:47:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:48:export default function RideStatusScreen() {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:49:  const params = useLocalSearchParams<{
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:50:    rideId?: string | string[];
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:51:  }>();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:52:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:53:  const rideId = Array.isArray(params.rideId)
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:54:    ? params.rideId[0]
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:55:    : params.rideId;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:56:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:57:  const [ride, setRide] = useState<Ride | null>(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:58:  const [message, setMessage] = useState('');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:59:  const [isLoading, setIsLoading] = useState(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:60:  const [isRefreshing, setIsRefreshing] = useState(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:61:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:62:  const checkRideStatusById = useCallback(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:63:    async (idToCheck: string, isAutoRefresh = false) => {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:64:      const cleanRideId = idToCheck.trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:65:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:66:      if (!cleanRideId) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:67:        setMessage(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:68:          'No ride was selected. Please submit a ride request first.',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:69:        );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:70:        setRide(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:71:        setIsLoading(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:72:        return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:73:      }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:74:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:75:      try {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:76:        if (isAutoRefresh) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:79:          setIsLoading(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:80:          setMessage('');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:81:        }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:82:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:83:        const response = await fetch(
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:84:          `${API_BASE_URL}/rides/${cleanRideId}`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:85:        );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:86:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:87:        const data = await response.json();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:88:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:89:        if (!response.ok) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:90:          if (!isAutoRefresh) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:91:            setMessage(data.message || 'Ride not found.');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:92:            setRide(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:93:          }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:94:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:114:    [],
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:115:  );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:116:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:117:  useEffect(() => {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:118:    if (!rideId) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:119:      setMessage(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:120:        'No ride was selected. Please submit a ride request first.',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:121:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:122:      setIsLoading(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:123:      return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:124:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:125:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:126:    checkRideStatusById(rideId);
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:127:  }, [rideId, checkRideStatusById]);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:128:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:129:  useEffect(() => {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:130:    if (
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:131:      !ride ||
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:132:      ride.status === 'COMPLETED' ||
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:133:      ride.status === 'CANCELLED'
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:134:    ) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:135:      return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:136:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:137:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:294:            </TouchableOpacity>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:295:          </View>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:296:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:297:          <RiderLiveTripMap
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:298:            rideId={ride.id}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:299:            status={ride.status}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:300:            pickup={pickupMapPoint}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:301:            dropoff={dropoffMapPoint}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:302:            driverAssigned={Boolean(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:303:              ride.driver?.id,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:304:            )}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:305:            driverName={
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:306:              ride.driver?.fullName
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:307:            }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:308:            vehicleLabel={vehicleLabel}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:409:              onPress={() =>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:410:                router.push({
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:411:                  pathname: '/receipt',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:412:                  params: {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:413:                    rideId: ride.id,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:414:                  },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:415:                })
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:416:              }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:417:            >
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:418:              <Text style={styles.receiptButtonText}>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:419:                View Receipt
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:420:              </Text>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:421:            </TouchableOpacity>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:422:          ) : null}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\ride-status.tsx:423:        </>
+
+=== .\joy-ride-rider-app\app\(tabs)\receipt.tsx ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:10:  View,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:11:} from 'react-native';
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:12:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:13:type ReceiptResponse = {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:14:  rideId: string;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:15:  rideStatus: string;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:16:  riderName: string;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:17:  riderPhone: string;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:18:  pickupLabel: string | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:19:  pickupAddress: string | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:20:  dropoffLabel: string | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:21:  dropoffAddress: string | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:22:  requestedAt: string;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:23:  completedAt: string;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:24:  driver: {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:49:};
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:50:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:51:export default function ReceiptScreen() {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:52:  const params = useLocalSearchParams<{
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:53:    rideId?: string | string[];
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:54:  }>();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:55:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:56:  const rideId = Array.isArray(params.rideId)
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:57:    ? params.rideId[0]
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:58:    : params.rideId;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:59:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:60:  const [receipt, setReceipt] =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:61:    useState<ReceiptResponse | null>(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:62:  const [message, setMessage] = useState('');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:63:  const [isLoading, setIsLoading] = useState(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:64:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:65:  const fetchReceipt = useCallback(async () => {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:66:    if (!rideId?.trim()) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:67:      setReceipt(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:68:      setMessage(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:69:        'No completed ride was selected. Open the receipt from your completed ride status.',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:70:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:71:      setIsLoading(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:72:      return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:73:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:74:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:75:    try {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:76:      setIsLoading(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:77:      setMessage('');
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:78:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:79:      const response = await fetch(
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:80:        `${API_BASE_URL}/rides/${rideId.trim()}/settlement`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:81:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:82:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:83:      const data = await response.json();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:84:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:85:      if (!response.ok) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:86:        setReceipt(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:87:        setMessage(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:88:          data.message ||
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:89:            'Your receipt is not available yet. Please check again after the ride has been completed.',
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:90:        );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:99:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:100:    } finally {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:101:      setIsLoading(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:102:    }
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:103:  }, [rideId]);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:104:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:105:  useEffect(() => {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:106:    fetchReceipt();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:107:  }, [fetchReceipt]);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:108:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:109:  function formatDate(value?: string) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:110:    if (!value) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:111:      return 'Not available';
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:112:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:113:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:157:          <Text style={styles.messageText}>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:158:            {message}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:159:          </Text>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:160:
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:161:          {rideId ? (
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:162:            <TouchableOpacity
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:163:              style={styles.retryButton}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:164:              onPress={fetchReceipt}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:165:            >
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:166:              <Text style={styles.retryButtonText}>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:167:                Try Again
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:168:              </Text>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:169:            </TouchableOpacity>
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:170:          ) : null}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\app\(tabs)\receipt.tsx:171:
+
+=== .\joy-ride-rider-app\hooks\use-ride-driver-location.ts ===
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:12:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:13:const DEFAULT_POLL_INTERVAL_MS = 5000;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:14:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:15:export type RideDriverLocation = {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:16:  rideId: string;
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:17:  driverId: string;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:18:  latitude: number;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:19:  longitude: number;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:20:  accuracy: number | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:21:  heading: number | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:22:  speed: number | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:23:  recordedAt: string;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:24:  isFresh: boolean;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:25:};
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:26:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:27:type UseRideDriverLocationOptions = {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:28:  rideId?: string | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:29:  enabled: boolean;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:30:  pollIntervalMs?: number;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:31:};
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:32:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:33:type UseRideDriverLocationResult = {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:34:  location: RideDriverLocation | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:35:  isLoading: boolean;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:36:  error: string | null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:37:  refresh: () => Promise<void>;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:38:};
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:65:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:66:  if (
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:67:    latitude == null ||
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:68:    longitude == null ||
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:69:    typeof candidate.rideId !== 'string' ||
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:70:    typeof candidate.driverId !== 'string' ||
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:71:    typeof candidate.recordedAt !== 'string'
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:72:  ) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:73:    return null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:74:  }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:75:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:76:  return {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:77:    rideId: candidate.rideId,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:78:    driverId: candidate.driverId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:79:    latitude,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:80:    longitude,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:81:    accuracy: asNullableNumber(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:82:      candidate.accuracy,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:83:    ),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:84:    heading: asNullableNumber(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:85:      candidate.heading,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:86:    ),
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:87:    speed: asNullableNumber(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:88:      candidate.speed,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:92:  };
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:93:}
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:94:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:95:export function useRideDriverLocation({
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:96:  rideId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:97:  enabled,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:98:  pollIntervalMs = DEFAULT_POLL_INTERVAL_MS,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:99:}: UseRideDriverLocationOptions): UseRideDriverLocationResult {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:100:  const [location, setLocation] =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:101:    useState<RideDriverLocation | null>(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:102:  const [isLoading, setIsLoading] =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:103:    useState(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:104:  const [error, setError] =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:105:    useState<string | null>(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:106:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:109:  const requestInFlightRef =
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:110:    useRef(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:111:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:112:  const refresh = useCallback(async () => {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:113:    const cleanRideId = rideId?.trim();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:114:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:115:    if (
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:116:      !enabled ||
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:117:      !cleanRideId ||
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:118:      requestInFlightRef.current
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:119:    ) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:120:      return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:121:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:122:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:123:    requestInFlightRef.current = true;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:124:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:125:    abortControllerRef.current?.abort();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:126:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:127:    const controller = new AbortController();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:129:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:130:    setIsLoading(true);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:131:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:132:    try {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:133:      const response = await fetch(
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:134:        `${API_BASE_URL}/rides/${encodeURIComponent(
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:135:          cleanRideId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:136:        )}/location`,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:137:        {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:138:          signal: controller.signal,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:139:        },
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:140:      );
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:141:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:142:      /*
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:143:       * A 404 is expected for a short period when:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:144:       * - a Driver has only just been assigned, or
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:145:       * - that Driver has not sent the first GPS ping yet.
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:191:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:192:      requestInFlightRef.current = false;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:193:      setIsLoading(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:194:    }
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:195:  }, [enabled, rideId]);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:196:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:197:  useEffect(() => {
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:198:    if (!enabled || !rideId?.trim()) {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:199:      abortControllerRef.current?.abort();
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:200:      abortControllerRef.current = null;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:201:      requestInFlightRef.current = false;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:202:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:203:      setLocation(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:204:      setError(null);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:205:      setIsLoading(false);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:206:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:207:      return;
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:208:    }
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:223:  }, [
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:224:    enabled,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:225:    pollIntervalMs,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:226:    refresh,
+> C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:227:    rideId,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:228:  ]);
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:229:
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:230:  return {
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:231:    location,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:232:    isLoading,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:233:    error,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:234:    refresh,
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:235:  };
+  C:\Users\SPDD 01\Desktop\explore-png-platform\joy-ride-rider-app\hooks\use-ride-driver-location.ts:236:}
+

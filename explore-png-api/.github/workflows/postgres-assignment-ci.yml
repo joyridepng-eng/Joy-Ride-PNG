@@ -1,0 +1,53 @@
+name: PostgreSQL assignment CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  postgres-assignment:
+    name: PostgreSQL assignment concurrency
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_DB: joyride_assignment_ci
+          # Disposable CI only; no password or production secret is used.
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 127.0.0.1:54329:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d joyride_assignment_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://ci@127.0.0.1:54329/joyride_assignment_ci?schema=public
+      JOYRIDE_POSTGRES_TEST: "1"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Build actual backend services
+        run: npm run build
+      - name: Verify real PostgreSQL assignment concurrency
+        run: node tools/verify-postgres-assignment.cjs
+      - name: Verify authenticated telemetry replay with PostgreSQL
+        run: node tools/verify-postgres-telemetry.cjs

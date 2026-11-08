@@ -1,0 +1,9 @@
+{
+  "upstreamPackage": "decode-uri-component",
+  "upstreamVersion": "0.5.0",
+  "upstreamSourceSha256": "9401353df38f8010ad7035fe8d666bce6a4902bc1cff809afc4ab23fa2e0bdaa",
+  "adaptation": "TypeScript CommonJS transpilation and default-export bridge",
+  "compilerVersion": "5.9.3",
+  "adapterSha256": "0eacbce873d06956cad29070ca1d35d5c25b7202796da8e83e4020ced90fff9f",
+  "packaging": "Local CommonJS adapter; not an official upstream package"
+}

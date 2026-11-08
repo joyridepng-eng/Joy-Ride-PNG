@@ -1,0 +1,161 @@
+import { useEffect, useState } from 'react';
+import type { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+
+// Update this if your computer's local Wi-Fi IP address changes.
+const SOCKET_URL = 'http://172.19.97.204:3000';
+
+export interface TripLocationPayload {
+  latitude: number;
+  longitude: number;
+  bearing?: number;
+  etaText?: string;
+  status?: string;
+}
+
+type TrackingState = {
+  tripId: string;
+  driverLocation: TripLocationPayload | null;
+  isConnected: boolean;
+};
+
+function parseNumber(value: unknown): number | null {
+  if (typeof value !== 'number' && typeof value !== 'string') return null;
+  if (typeof value === 'string' && value.trim() === '') return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function calculateBearing(
+  start: TripLocationPayload,
+  end: { latitude: number; longitude: number },
+): number {
+  const radians = Math.PI / 180;
+  const lat1 = start.latitude * radians;
+  const lat2 = end.latitude * radians;
+  const deltaLng = (end.longitude - start.longitude) * radians;
+  const y = Math.sin(deltaLng) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2)
+    - Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLng);
+  return (Math.atan2(y, x) / radians + 360) % 360;
+}
+
+export function useTripTracking(tripId: string) {
+  const [state, setState] = useState<TrackingState>({
+    tripId,
+    driverLocation: null,
+    isConnected: false,
+  });
+
+  useEffect(() => {
+    let active = true;
+    setState({ tripId, driverLocation: null, isConnected: false });
+    if (!tripId.trim()) return;
+
+    const socket: Socket = io(SOCKET_URL, {
+      // Try polling first, then upgrade to WebSocket when available.
+      transports: ['polling', 'websocket'],
+      autoConnect: false,
+      forceNew: true,
+      reconnection: true,
+      reconnectionAttempts: 20,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 10000,
+    });
+
+    const onConnect = () => {
+      if (!active) return;
+      console.log(`Connected to tracking server: ${socket.id}`);
+      setState((previous) => ({ ...previous, isConnected: true }));
+      // The connect event runs again after a successful reconnection.
+      socket.emit('subscribe_trip', { tripId });
+    };
+
+    const onLocationUpdate = (payload: unknown) => {
+      if (!active || !payload || typeof payload !== 'object') return;
+      const data = payload as Record<string, unknown>;
+
+      // Supports the existing server, which omits tripId in its payloads.
+      if (data.tripId !== undefined && data.tripId !== tripId) return;
+
+      const latitude = parseNumber(data.latitude);
+      const longitude = parseNumber(data.longitude);
+      if (latitude === null || longitude === null
+        || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) {
+        console.warn('Ignored invalid driver coordinates');
+        return;
+      }
+
+      console.log('Driver location received:', { latitude, longitude });
+      setState((previous) => {
+        const last = previous.driverLocation;
+        const moved = last !== null
+          && (last.latitude !== latitude || last.longitude !== longitude);
+
+        // The pasted simulator has inaccurate hard-coded bearings.
+        // Derive heading from movement; retain it while stationary.
+        const bearing = last && moved
+          ? calculateBearing(last, { latitude, longitude })
+          : last?.bearing ?? 0;
+
+        return {
+          ...previous,
+          driverLocation: {
+            latitude,
+            longitude,
+            bearing,
+            etaText: typeof data.etaText === 'string'
+              ? data.etaText : last?.etaText,
+            status: typeof data.status === 'string'
+              ? data.status : last?.status,
+          },
+        };
+      });
+    };
+
+    const onConnectError = (error: Error) => {
+      if (!active) return;
+      console.warn('Tracking connection error:', error.message);
+      setState((previous) => ({ ...previous, isConnected: false }));
+    };
+
+    const onDisconnect = (reason: string) => {
+      if (!active) return;
+      console.log('Tracking disconnected:', reason);
+      // Keep the last known position while the connection is unavailable.
+      setState((previous) => ({ ...previous, isConnected: false }));
+    };
+
+    const onReconnectFailed = () => {
+      if (!active) return;
+      console.warn('Tracking reconnection attempts exhausted. Check the server and reload the app.');
+      setState((previous) => ({ ...previous, isConnected: false }));
+    };
+
+    // Register listeners before connecting so the first update is captured.
+    socket.on('connect', onConnect);
+    socket.on('driver_location_update', onLocationUpdate);
+    socket.on('connect_error', onConnectError);
+    socket.on('disconnect', onDisconnect);
+    socket.io.on('reconnect_failed', onReconnectFailed);
+    socket.connect();
+
+    return () => {
+      active = false;
+      socket.off('connect', onConnect);
+      socket.off('driver_location_update', onLocationUpdate);
+      socket.off('connect_error', onConnectError);
+      socket.off('disconnect', onDisconnect);
+      socket.io.off('reconnect_failed', onReconnectFailed);
+      socket.disconnect();
+    };
+  }, [tripId]);
+
+  // Never expose the previous trip's location while the new effect starts.
+  const isCurrentTrip = state.tripId === tripId && tripId.trim().length > 0;
+  return {
+    driverLocation: isCurrentTrip ? state.driverLocation : null,
+    isConnected: isCurrentTrip && state.isConnected,
+  };
+}

@@ -1,0 +1,51 @@
+name: Admin Safety Test web
+
+on:
+  push:
+    branches: [master, main, feature/admin-feedback-emergencies]
+  pull_request:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  web-contracts:
+    name: Browser contracts and isolated web export
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      EXPO_NO_DOTENV: "1"
+      EXPO_NO_TELEMETRY: "1"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install locked dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts --include=dev --no-audit --no-fund
+      - name: Check TypeScript and changed web code lint
+        run: |
+          npx tsc --noEmit
+          npx eslint constants/api.web.ts config/with-safety-test-web.cjs services/admin-safety.web.ts components/emergency-tracking.web.tsx components/emergency-map/index.web.tsx components/emergency-map/google.web.ts components/emergency-map/web-map-core.ts tools/admin-safety-web-utils.cjs tools/serve-admin-safety-web.cjs tools/verify-admin-web.cjs tools/verify-admin-google-map.cjs tools/verify-admin-web-config.cjs tools/verify-admin-web-export.cjs --max-warnings 0
+      - name: Verify native and browser safety contracts
+        run: |
+          node tools/verify-admin-safety.cjs
+          node tools/verify-safety-test-config.cjs
+          node tools/verify-admin-web.cjs
+          node tools/verify-admin-google-map.cjs
+          node tools/verify-admin-web-config.cjs
+      - name: Export isolated test website without Maps keys
+        env:
+          EXPO_PUBLIC_JOYRIDE_WEB_SAFETY_TEST: "1"
+          EXPO_PUBLIC_JOYRIDE_VARIANT: "safety-test"
+          EXPO_PUBLIC_API_BASE_URL: "https://joyride-safety-test-api.onrender.com"
+        run: |
+          npx expo export --platform web --output-dir "$RUNNER_TEMP/joyride-safety-web/dist"
+          node tools/verify-admin-web-export.cjs "$RUNNER_TEMP/joyride-safety-web"

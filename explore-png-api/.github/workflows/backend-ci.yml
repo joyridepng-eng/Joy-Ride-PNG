@@ -1,0 +1,53 @@
+name: Backend CI
+'on':
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+permissions:
+  contents: read
+jobs:
+  test-backend:
+    name: Build and test backend
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci?schema=public
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Check source encoding and conflict markers
+        run: node tools/verify-source-hygiene.cjs
+      - name: Install dependencies
+        run: npm ci
+      - name: Audit production dependencies
+        run: npm run audit:production
+      - name: Validate Prisma schema
+        run: npm run prisma:validate
+      - name: Generate Prisma client
+        run: npx prisma generate
+      - name: Run strict ESLint
+        run: npm run lint -- --max-warnings=0
+      - name: Check Prettier formatting
+        run: npm run format:check
+      - name: Check TypeScript
+        run: npm run typecheck
+      - name: Build backend
+        run: npm run build
+      - name: Run unit and service tests
+        run: npm test -- --runInBand
+      - name: Run non-destructive HTTP tests
+        run: npm run test:e2e -- --runInBand
+      - name: Test busy-driver assignment protection
+        run: node tools/verify-driver-assignment.cjs

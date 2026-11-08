@@ -1,0 +1,51 @@
+name: Safety migration replay CI
+
+on:
+  pull_request:
+    branches: [master, main]
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  migration-replay:
+    name: PostgreSQL 18 full migration replay
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: joyride_migrations_ci
+        ports:
+          - 54331:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d joyride_migrations_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:54331/joyride_migrations_ci?schema=public
+      JOYRIDE_MIGRATION_REPLAY: disposable-pg18
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Validate schema
+        run: npm run prisma:validate
+      - name: Generate Prisma client
+        run: npx prisma generate
+      - name: Replay and verify registered migrations
+        run: node tools/verify-safety-migration-replay.cjs

@@ -1,0 +1,5099 @@
+==================================================
+FILE: .\joy-ride-driver-app\package.json
+==================================================
+{
+  "name": "joy-ride-driver-app",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "expo start",
+    "reset-project": "node ./scripts/reset-project.js",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "@maplibre/maplibre-react-native": "^11.3.6",
+    "@react-navigation/bottom-tabs": "^7.4.0",
+    "@react-navigation/elements": "^2.6.3",
+    "@react-navigation/native": "^7.1.8",
+    "expo": "~54.0.37",
+    "expo-constants": "~18.0.14",
+    "expo-font": "~14.0.11",
+    "expo-haptics": "~15.0.8",
+    "expo-image": "~3.0.11",
+    "expo-linking": "~8.0.12",
+    "expo-location": "~19.0.8",
+    "expo-router": "~6.0.23",
+    "expo-splash-screen": "~31.0.13",
+    "expo-status-bar": "~3.0.9",
+    "expo-symbols": "~1.0.8",
+    "expo-system-ui": "~6.0.9",
+    "expo-updates": "~29.0.20",
+    "expo-web-browser": "~15.0.11",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-maps": "1.20.1",
+    "react-native-reanimated": "~4.1.1",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.5.1"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "eslint": "^9.25.0",
+    "eslint-config-expo": "~10.0.0",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
+
+==================================================
+FILE: .\joy-ride-driver-app\app\_layout.tsx
+==================================================
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import 'react-native-reanimated';
+
+import { useColorScheme } from '@/hooks/use-color-scheme';
+
+export const unstable_settings = {
+  anchor: '(tabs)',
+};
+
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
+  );
+}
+
+==================================================
+FILE: .\joy-ride-driver-app\app\(tabs)\_layout.tsx
+==================================================
+import { Tabs } from 'expo-router';
+import React from 'react';
+
+import { HapticTab } from '@/components/haptic-tab';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+
+export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        headerShown: false,
+        tabBarButton: HapticTab,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="assigned-ride"
+        options={{
+          title: 'Assigned Ride',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="car.fill" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="availability"
+        options={{
+          title: 'Availability',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill.checkmark" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="explore"
+        options={{
+          href: null,
+        }}
+      />
+    </Tabs>
+  );
+}
+
+==================================================
+FILE: .\joy-ride-driver-app\app\(tabs)\index.tsx
+==================================================
+import * as Updates from "expo-updates";
+import { router } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+export default function DriverHomeScreen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.logo}>Joy Ride Driver</Text>
+
+      <Text style={styles.title}>Manage your assigned rides</Text>
+
+      <Text style={styles.subtitle}>
+        View your assigned trip and update the ride status as you complete the
+        job.
+      </Text>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Driver MVP</Text>
+
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={() => router.push("/assigned-ride")}
+        >
+          <Text style={styles.primaryButtonText}>View Assigned Ride</Text>
+          <Text style={styles.buttonHint}>
+            Check your current assigned trip
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.updateStatus}>
+        {Updates.updateId ? "OTA Update Active" : "Embedded APK"}
+      </Text>
+
+      <Text style={styles.footer}>Explore PNG Platform MVP</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    justifyContent: "center",
+    backgroundColor: "#f8fafc",
+  },
+  logo: {
+    fontSize: 38,
+    fontWeight: "900",
+    color: "#0f172a",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 23,
+    fontWeight: "800",
+    color: "#1e293b",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#475569",
+    textAlign: "center",
+    lineHeight: 24,
+    marginBottom: 28,
+  },
+  card: {
+    backgroundColor: "#ffffff",
+    borderRadius: 18,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  cardTitle: {
+    fontSize: 17,
+    fontWeight: "800",
+    color: "#0f172a",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  primaryButton: {
+    backgroundColor: "#16a34a",
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+  },
+  primaryButtonText: {
+    color: "#ffffff",
+    fontSize: 17,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  buttonHint: {
+    color: "#dcfce7",
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 4,
+  },
+  updateStatus: {
+    marginTop: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignSelf: "center",
+    color: "#166534",
+    backgroundColor: "#dcfce7",
+    borderColor: "#86efac",
+    borderRadius: 999,
+    borderWidth: 1,
+    fontSize: 12,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  footer: {
+    marginTop: 18,
+    textAlign: "center",
+    color: "#94a3b8",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+});
+
+==================================================
+FILE: .\joy-ride-driver-app\app\(tabs)\assigned-ride.tsx
+==================================================
+import { RideMap } from "@/components/ride-map";
+import { API_BASE_URL } from "@/constants/api";
+import { useDriverLocationTracking } from "@/hooks/use-driver-location-tracking";
+import { useDrivingRoute } from "@/hooks/use-driving-route";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+type Ride = {
+  id: string;
+  status: string;
+  riderName: string;
+  riderPhone: string;
+  pickupLabel: string | null;
+  pickupAddress: string | null;
+  pickupLatitude: number | null;
+  pickupLongitude: number | null;
+  dropoffLabel: string | null;
+  dropoffAddress: string | null;
+  dropoffLatitude: number | null;
+  dropoffLongitude: number | null;
+  estimatedFare: number | null;
+  finalFare: number | null;
+  driver?: {
+    id: string;
+    fullName: string;
+    phone: string;
+  } | null;
+  vehicle?: {
+    id: string;
+    plateNumber: string;
+    make: string;
+    model: string;
+    color: string;
+  } | null;
+};
+
+const ACTIVE_DRIVER_STATUSES = ["ACCEPTED", "DRIVER_ARRIVED", "IN_PROGRESS"];
+
+export default function AssignedRideScreen() {
+  const driverId = "cmqxiib050000dcrih388jp0a";
+  const [assignedRide, setAssignedRide] = useState<Ride | null>(null);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+
+  const trackingEnabled =
+    Platform.OS !== "web" &&
+    assignedRide !== null &&
+    ACTIVE_DRIVER_STATUSES.includes(assignedRide.status);
+
+  const {
+    status: trackingStatus,
+    errorMessage: trackingError,
+    latestLocation,
+    isTracking,
+  } = useDriverLocationTracking({
+    driverId,
+    rideId: assignedRide?.id,
+    enabled: trackingEnabled,
+  });
+
+  const driverMapLocation = useMemo(
+    () =>
+      latestLocation
+        ? {
+            latitude: latestLocation.latitude,
+            longitude: latestLocation.longitude,
+            accuracy: latestLocation.accuracy,
+            heading: latestLocation.heading,
+            speed: latestLocation.speed,
+            label: "Your live location",
+          }
+        : null,
+    [
+      latestLocation?.latitude,
+      latestLocation?.longitude,
+      latestLocation?.accuracy,
+      latestLocation?.heading,
+      latestLocation?.speed,
+    ],
+  );
+
+  const pickupMapLocation = useMemo(
+    () =>
+      assignedRide?.pickupLatitude !== null &&
+      assignedRide?.pickupLatitude !== undefined &&
+      assignedRide?.pickupLongitude !== null &&
+      assignedRide?.pickupLongitude !== undefined
+        ? {
+            latitude: assignedRide.pickupLatitude,
+            longitude: assignedRide.pickupLongitude,
+            label:
+              assignedRide.pickupLabel ||
+              "Pickup",
+            address:
+              assignedRide.pickupAddress ||
+              assignedRide.pickupLabel ||
+              "Pickup location",
+          }
+        : null,
+    [
+      assignedRide?.pickupLatitude,
+      assignedRide?.pickupLongitude,
+      assignedRide?.pickupLabel,
+      assignedRide?.pickupAddress,
+    ],
+  );
+
+  const dropoffMapLocation = useMemo(
+    () =>
+      assignedRide?.dropoffLatitude !== null &&
+      assignedRide?.dropoffLatitude !== undefined &&
+      assignedRide?.dropoffLongitude !== null &&
+      assignedRide?.dropoffLongitude !== undefined
+        ? {
+            latitude: assignedRide.dropoffLatitude,
+            longitude: assignedRide.dropoffLongitude,
+            label:
+              assignedRide.dropoffLabel ||
+              "Drop-off",
+            address:
+              assignedRide.dropoffAddress ||
+              assignedRide.dropoffLabel ||
+              "Drop-off location",
+          }
+        : null,
+    [
+      assignedRide?.dropoffLatitude,
+      assignedRide?.dropoffLongitude,
+      assignedRide?.dropoffLabel,
+      assignedRide?.dropoffAddress,
+    ],
+  );
+
+  const navigationMode =
+    assignedRide?.status === "IN_PROGRESS"
+      ? "dropoff"
+      : assignedRide?.status === "DRIVER_ARRIVED"
+        ? "waiting"
+        : "pickup";
+
+  const activeDestination =
+    navigationMode === "dropoff"
+      ? dropoffMapLocation
+      : pickupMapLocation;
+
+  const {
+    route: drivingRoute,
+    errorMessage: routeError,
+    isLoading: routeLoading,
+  } = useDrivingRoute({
+    origin: driverMapLocation,
+    destination: activeDestination,
+    enabled:
+      trackingEnabled &&
+      driverMapLocation !== null &&
+      activeDestination !== null,
+  });
+
+  useEffect(() => {
+    if (Platform.OS === "web") {
+      return;
+    }
+
+    if (!assignedRide) {
+      return;
+    }
+
+    if (!ACTIVE_DRIVER_STATUSES.includes(assignedRide.status)) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      findAssignedRide(true);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [assignedRide?.id, assignedRide?.status]);
+
+  async function findAssignedRide(isAutoRefresh = false) {
+
+    try {
+      if (!isAutoRefresh) {
+        setIsLoading(true);
+        setMessage("");
+        setAssignedRide(null);
+      }
+
+      const response = await fetch(`${API_BASE_URL}/rides`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (!isAutoRefresh) {
+          setMessage(data.message || "Could not load rides.");
+        }
+        return;
+      }
+
+      const rides = Array.isArray(data) ? data : [];
+
+      const matchedRide =
+        rides.find(
+          (ride: Ride) =>
+            ride.driver?.id === driverId.trim() &&
+            ACTIVE_DRIVER_STATUSES.includes(ride.status),
+        ) || null;
+
+      if (!matchedRide) {
+        setAssignedRide(null);
+
+        if (!isAutoRefresh) {
+          setMessage("No active assigned ride found for this driver.");
+        }
+
+        return;
+      }
+
+      setAssignedRide(matchedRide);
+
+      if (!isAutoRefresh) {
+        setMessage("Assigned ride loaded.");
+      }
+    } catch {
+      if (!isAutoRefresh) {
+        setMessage(
+          `Could not connect to the backend. Make sure the backend server is running on ${API_BASE_URL}.`,
+        );
+      }
+    } finally {
+      if (!isAutoRefresh) {
+        setIsLoading(false);
+      }
+    }
+  }
+
+  async function updateRideStatus(nextStatus: string) {
+    if (!assignedRide) {
+      setMessage("No assigned ride selected.");
+      return;
+    }
+
+    try {
+      setIsUpdatingStatus(true);
+      setMessage("");
+
+      const response = await fetch(
+        `${API_BASE_URL}/rides/${assignedRide.id}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: nextStatus,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.message || "Could not update ride status.");
+        return;
+      }
+
+      if (ACTIVE_DRIVER_STATUSES.includes(data.status)) {
+        setAssignedRide(data);
+        setMessage(`Ride updated to ${data.status}.`);
+      } else {
+        setAssignedRide(null);
+        setMessage(
+          `Ride updated to ${data.status}. This ride is no longer active.`,
+        );
+      }
+    } catch {
+      setMessage(
+        `Could not connect to the backend. Make sure the backend server is running on ${API_BASE_URL}.`,
+      );
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  }
+
+  function getDriverActionMessage(status: string) {
+    switch (status) {
+      case "ACCEPTED":
+        return "Go to the pickup location and mark arrived when you reach the rider.";
+      case "DRIVER_ARRIVED":
+        return "You have arrived. Start the ride when the rider is in the vehicle.";
+      case "IN_PROGRESS":
+        return "Ride is in progress. Complete the ride when you reach the dropoff location.";
+      default:
+        return "This ride is not active for driver action.";
+    }
+  }
+
+  function getAutoRefreshMessage(status: string) {
+    if (!ACTIVE_DRIVER_STATUSES.includes(status)) {
+      return "Auto-refresh stopped because this ride is no longer active.";
+    }
+
+    return "Auto-refresh is active. This screen checks for assigned ride updates every 5 seconds.";
+  }
+
+  function renderActionButton() {
+    if (!assignedRide) {
+      return null;
+    }
+
+    if (assignedRide.status === "ACCEPTED") {
+      return (
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            isUpdatingStatus ? styles.disabledButton : null,
+          ]}
+          onPress={() => updateRideStatus("DRIVER_ARRIVED")}
+          disabled={isUpdatingStatus}
+        >
+          <Text style={styles.actionButtonText}>
+            {isUpdatingStatus ? "Updating..." : "Mark Arrived"}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+
+    if (assignedRide.status === "DRIVER_ARRIVED") {
+      return (
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            isUpdatingStatus ? styles.disabledButton : null,
+          ]}
+          onPress={() => updateRideStatus("IN_PROGRESS")}
+          disabled={isUpdatingStatus}
+        >
+          <Text style={styles.actionButtonText}>
+            {isUpdatingStatus ? "Updating..." : "Start Ride"}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+
+    if (assignedRide.status === "IN_PROGRESS") {
+      return (
+        <TouchableOpacity
+          style={[
+            styles.completeButton,
+            isUpdatingStatus ? styles.disabledButton : null,
+          ]}
+          onPress={() => updateRideStatus("COMPLETED")}
+          disabled={isUpdatingStatus}
+        >
+          <Text style={styles.actionButtonText}>
+            {isUpdatingStatus ? "Updating..." : "Complete Ride"}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+
+    return null;
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Assigned Ride</Text>
+
+      <Text style={styles.subtitle}>
+        Testing as the configured Explore PNG driver.
+      </Text>
+
+      <View style={styles.testDriverBox}>
+        <Text style={styles.testDriverLabel}>Active test driver</Text>
+        <Text style={styles.testDriverName}>Test Driver Two</Text>
+      </View>
+
+      <TouchableOpacity
+        style={[styles.primaryButton, isLoading ? styles.disabledButton : null]}
+        onPress={() => findAssignedRide()}
+        disabled={isLoading}
+      >
+        <Text style={styles.primaryButtonText}>
+          {isLoading ? "Checking..." : "Find Assigned Ride"}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.refreshButton, isLoading ? styles.disabledButton : null]}
+        onPress={() => findAssignedRide()}
+        disabled={isLoading}
+      >
+        <Text style={styles.refreshButtonText}>
+          {isLoading ? "Refreshing..." : "Refresh Assigned Ride"}
+        </Text>
+      </TouchableOpacity>
+
+      {message ? (
+        <View
+          style={assignedRide ? styles.successMessageBox : styles.messageBox}
+        >
+          <Text
+            style={
+              assignedRide ? styles.successMessageText : styles.messageText
+            }
+          >
+            {message}
+          </Text>
+        </View>
+      ) : null}
+
+      {assignedRide ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Assigned Ride Found</Text>
+
+          <Text style={styles.status}>{assignedRide.status}</Text>
+          <Text style={styles.statusMessage}>
+            {getDriverActionMessage(assignedRide.status)}
+          </Text>
+
+          <View style={styles.autoRefreshBox}>
+            <Text style={styles.autoRefreshText}>
+              {getAutoRefreshMessage(assignedRide.status)}
+            </Text>
+          </View>
+
+          <View
+            style={[
+              styles.trackingBox,
+              trackingError ? styles.trackingErrorBox : null,
+            ]}
+          >
+            <Text style={styles.trackingTitle}>Live GPS Tracking</Text>
+
+            <Text
+              style={[
+                styles.trackingText,
+                trackingError ? styles.trackingErrorText : null,
+              ]}
+            >
+              {Platform.OS === "web"
+                ? "Live GPS tracking is disabled on web. Use the Android app for live location sharing."
+                : trackingStatus === "requesting-permission"
+                  ? "Requesting location permission..."
+                  : trackingError
+                    ? trackingError
+                    : isTracking
+                      ? "Live location sharing is active."
+                      : "Waiting for live GPS tracking to start."}
+            </Text>
+
+            <RideMap
+              driverLocation={driverMapLocation}
+              pickupLocation={pickupMapLocation}
+              dropoffLocation={dropoffMapLocation}
+              activeDestination={activeDestination}
+              route={drivingRoute}
+              routeLoading={routeLoading}
+              routeError={routeError}
+              navigationMode={navigationMode}
+            />
+
+            {latestLocation ? (
+              <>
+                <Text style={styles.trackingCoordinate}>
+                  Accuracy:{" "}
+                  {latestLocation.accuracy === null
+                    ? "Unavailable"
+                    : `${latestLocation.accuracy.toFixed(1)} m`}
+                </Text>
+
+                <Text style={styles.trackingTimestamp}>
+                  Last updated:{" "}
+                  {new Date(latestLocation.recordedAt).toLocaleTimeString()}
+                </Text>
+              </>
+            ) : null}
+          </View>
+
+          {renderActionButton()}
+
+          <View style={styles.divider} />
+
+          <Text style={styles.detailLabel}>Ride ID</Text>
+          <Text style={styles.detailText}>{assignedRide.id}</Text>
+
+          <Text style={styles.detailLabel}>Rider</Text>
+          <Text style={styles.detailText}>{assignedRide.riderName}</Text>
+          <Text style={styles.detailText}>{assignedRide.riderPhone}</Text>
+
+          <Text style={styles.detailLabel}>Pickup</Text>
+          <Text style={styles.detailText}>{assignedRide.pickupLabel}</Text>
+          <Text style={styles.detailText}>{assignedRide.pickupAddress}</Text>
+
+          <Text style={styles.detailLabel}>Dropoff</Text>
+          <Text style={styles.detailText}>{assignedRide.dropoffLabel}</Text>
+          <Text style={styles.detailText}>{assignedRide.dropoffAddress}</Text>
+
+          <Text style={styles.detailLabel}>Estimated Fare</Text>
+          <Text style={styles.detailText}>
+            K{assignedRide.estimatedFare ?? "-"}
+          </Text>
+
+          {assignedRide.vehicle ? (
+            <>
+              <View style={styles.divider} />
+              <Text style={styles.detailLabel}>Vehicle</Text>
+              <Text style={styles.detailText}>
+                {assignedRide.vehicle.color} {assignedRide.vehicle.make}{" "}
+                {assignedRide.vehicle.model}
+              </Text>
+              <Text style={styles.detailText}>
+                Plate: {assignedRide.vehicle.plateNumber}
+              </Text>
+            </>
+          ) : null}
+        </View>
+      ) : null}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 24,
+    backgroundColor: "#f8fafc",
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: "900",
+    color: "#0f172a",
+    textAlign: "center",
+    marginBottom: 12,
+    marginTop: 24,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#475569",
+    textAlign: "center",
+    lineHeight: 24,
+    marginBottom: 24,
+  },
+  testDriverBox: {
+    backgroundColor: "#ecfdf5",
+    borderWidth: 1,
+    borderColor: "#6ee7b7",
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 14,
+  },
+  testDriverLabel: {
+    color: "#047857",
+    fontSize: 12,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  testDriverName: {
+    color: "#065f46",
+    fontSize: 17,
+    fontWeight: "900",
+  },
+  primaryButton: {
+    backgroundColor: "#16a34a",
+    paddingVertical: 16,
+    borderRadius: 14,
+    marginTop: 10,
+    marginBottom: 12,
+  },
+  refreshButton: {
+    backgroundColor: "#0f172a",
+    paddingVertical: 14,
+    borderRadius: 14,
+    marginBottom: 18,
+  },
+  disabledButton: {
+    backgroundColor: "#94a3b8",
+  },
+  primaryButtonText: {
+    color: "#ffffff",
+    fontSize: 17,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  refreshButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  actionButton: {
+    backgroundColor: "#2563eb",
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 16,
+  },
+  completeButton: {
+    backgroundColor: "#dc2626",
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 16,
+  },
+  actionButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "900",
+    textAlign: "center",
+  },
+  messageBox: {
+    backgroundColor: "#fee2e2",
+    borderWidth: 1,
+    borderColor: "#fca5a5",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+  },
+  messageText: {
+    color: "#991b1b",
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "600",
+  },
+  successMessageBox: {
+    backgroundColor: "#dcfce7",
+    borderWidth: 1,
+    borderColor: "#86efac",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+  },
+  successMessageText: {
+    color: "#166534",
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "700",
+  },
+  card: {
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    marginBottom: 40,
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: "900",
+    color: "#0f172a",
+    marginBottom: 10,
+  },
+  status: {
+    fontSize: 24,
+    fontWeight: "900",
+    color: "#16a34a",
+    marginBottom: 6,
+  },
+  statusMessage: {
+    fontSize: 15,
+    color: "#475569",
+    lineHeight: 22,
+  },
+  autoRefreshBox: {
+    backgroundColor: "#e0f2fe",
+    borderWidth: 1,
+    borderColor: "#7dd3fc",
+    borderRadius: 10,
+    padding: 12,
+    marginTop: 14,
+  },
+  autoRefreshText: {
+    color: "#075985",
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+  },
+  trackingBox: {
+    backgroundColor: "#ecfdf5",
+    borderWidth: 1,
+    borderColor: "#6ee7b7",
+    borderRadius: 10,
+    padding: 12,
+    marginTop: 14,
+  },
+  trackingErrorBox: {
+    backgroundColor: "#fef2f2",
+    borderColor: "#fca5a5",
+  },
+  trackingTitle: {
+    color: "#065f46",
+    fontSize: 15,
+    fontWeight: "900",
+    marginBottom: 6,
+  },
+  trackingText: {
+    color: "#047857",
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+  },
+  trackingErrorText: {
+    color: "#991b1b",
+  },
+  trackingCoordinate: {
+    color: "#0f172a",
+    fontSize: 14,
+    marginTop: 5,
+  },
+  trackingTimestamp: {
+    color: "#475569",
+    fontSize: 13,
+    marginTop: 7,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#e2e8f0",
+    marginVertical: 16,
+  },
+  detailLabel: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#334155",
+    marginTop: 10,
+    marginBottom: 4,
+    textTransform: "uppercase",
+  },
+  detailText: {
+    fontSize: 16,
+    color: "#0f172a",
+    marginBottom: 3,
+  },
+});
+
+==================================================
+FILE: .\joy-ride-driver-app\app\(tabs)\assigned-ride.web.tsx
+==================================================
+import { API_BASE_URL } from "@/constants/api";
+import { useState } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+type Ride = {
+  id: string;
+  status: string;
+  riderName: string;
+  riderPhone: string;
+  pickupLabel: string | null;
+  pickupAddress: string | null;
+  dropoffLabel: string | null;
+  dropoffAddress: string | null;
+  estimatedFare: number | null;
+  vehicle?: {
+    plateNumber: string;
+    make: string;
+    model: string;
+    color: string;
+  } | null;
+  driver?: {
+    id: string;
+  } | null;
+};
+
+const ACTIVE_DRIVER_STATUSES = ["ACCEPTED", "DRIVER_ARRIVED", "IN_PROGRESS"];
+
+export default function AssignedRideWebScreen() {
+  const driverId = "cmqxiib050000dcrih388jp0a";
+  const [assignedRide, setAssignedRide] = useState<Ride | null>(null);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function findAssignedRide() {
+    const normalizedDriverId = driverId.trim();
+
+
+    try {
+      setIsLoading(true);
+      setMessage("");
+      setAssignedRide(null);
+
+      const response = await fetch(
+        `${API_BASE_URL}/rides/driver/${encodeURIComponent(
+          normalizedDriverId,
+        )}/active`,
+      );
+      const data: unknown = await response.json();
+
+      if (!response.ok) {
+        const errorMessage =
+          typeof data === "object" &&
+          data !== null &&
+          "message" in data &&
+          typeof data.message === "string"
+            ? data.message
+            : "Could not load rides.";
+
+        setMessage(errorMessage);
+        return;
+      }
+
+      if (
+        typeof data !== "object" ||
+        data === null ||
+        !("id" in data) ||
+        !("status" in data)
+      ) {
+        setMessage("No active assigned ride found for this driver.");
+        return;
+      }
+
+      const matchedRide = data as Ride;
+
+      if (!ACTIVE_DRIVER_STATUSES.includes(matchedRide.status)) {
+        setMessage("No active assigned ride found for this driver.");
+        return;
+      }
+
+      setAssignedRide(matchedRide);
+      setMessage("Assigned ride loaded.");
+    } catch {
+      setMessage(
+        `Could not connect to the backend. Make sure it is running on ${API_BASE_URL}.`,
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Assigned Ride</Text>
+
+      <Text style={styles.subtitle}>
+        Web mode shows ride details only. Live GPS tracking and maps are
+        available in the Android app.
+      </Text>
+      <View style={styles.testDriverBox}>
+        <Text style={styles.testDriverLabel}>Active test driver</Text>
+        <Text style={styles.testDriverName}>Test Driver Two</Text>
+      </View>
+<TouchableOpacity
+        style={[styles.button, isLoading ? styles.disabledButton : null]}
+        onPress={findAssignedRide}
+        disabled={isLoading}
+      >
+        <Text style={styles.buttonText}>
+          {isLoading ? "Checking..." : "Find Assigned Ride"}
+        </Text>
+      </TouchableOpacity>
+
+      {message ? (
+        <View style={assignedRide ? styles.successBox : styles.messageBox}>
+          <Text style={assignedRide ? styles.successText : styles.messageText}>
+            {message}
+          </Text>
+        </View>
+      ) : null}
+
+      {assignedRide ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Assigned Ride Found</Text>
+          <Text style={styles.status}>{assignedRide.status}</Text>
+
+          <Text style={styles.detailLabel}>Ride ID</Text>
+          <Text style={styles.detailText}>{assignedRide.id}</Text>
+
+          <Text style={styles.detailLabel}>Rider</Text>
+          <Text style={styles.detailText}>{assignedRide.riderName}</Text>
+          <Text style={styles.detailText}>{assignedRide.riderPhone}</Text>
+
+          <Text style={styles.detailLabel}>Pickup</Text>
+          <Text style={styles.detailText}>
+            {assignedRide.pickupLabel || assignedRide.pickupAddress || "-"}
+          </Text>
+
+          <Text style={styles.detailLabel}>Drop-off</Text>
+          <Text style={styles.detailText}>
+            {assignedRide.dropoffLabel || assignedRide.dropoffAddress || "-"}
+          </Text>
+
+          <Text style={styles.detailLabel}>Estimated Fare</Text>
+          <Text style={styles.detailText}>
+            K{assignedRide.estimatedFare ?? "-"}
+          </Text>
+
+          {assignedRide.vehicle ? (
+            <>
+              <Text style={styles.detailLabel}>Vehicle</Text>
+              <Text style={styles.detailText}>
+                {assignedRide.vehicle.color} {assignedRide.vehicle.make}{" "}
+                {assignedRide.vehicle.model}
+              </Text>
+              <Text style={styles.detailText}>
+                Plate: {assignedRide.vehicle.plateNumber}
+              </Text>
+            </>
+          ) : null}
+
+          <View style={styles.mobileNotice}>
+            <Text style={styles.mobileNoticeTitle}>Mobile-only features</Text>
+            <Text style={styles.mobileNoticeText}>
+              Live driver GPS, pickup and drop-off markers are available in the
+              Android APK.
+            </Text>
+          </View>
+        </View>
+      ) : null}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+    testDriverBox: {
+    backgroundColor: "#ecfdf5",
+    borderWidth: 1,
+    borderColor: "#6ee7b7",
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 14,
+  },
+  testDriverLabel: {
+    color: "#047857",
+    fontSize: 12,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  testDriverName: {
+    color: "#065f46",
+    fontSize: 17,
+    fontWeight: "900",
+  },
+container: {
+    padding: 24,
+    backgroundColor: "#f8fafc",
+    minHeight: "100%",
+  },
+  title: {
+    marginTop: 24,
+    marginBottom: 12,
+    color: "#0f172a",
+    fontSize: 30,
+    fontWeight: "900",
+    textAlign: "center",
+  },
+  subtitle: {
+    marginBottom: 24,
+    color: "#475569",
+    fontSize: 16,
+    lineHeight: 24,
+    textAlign: "center",
+  },
+  label: {
+    marginBottom: 6,
+    color: "#334155",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  input: {
+    marginBottom: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    backgroundColor: "#ffffff",
+    borderColor: "#cbd5e1",
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 16,
+  },
+  button: {
+    marginBottom: 18,
+    paddingVertical: 16,
+    backgroundColor: "#16a34a",
+    borderRadius: 14,
+  },
+  disabledButton: {
+    backgroundColor: "#94a3b8",
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 17,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  messageBox: {
+    marginBottom: 20,
+    padding: 16,
+    backgroundColor: "#fee2e2",
+    borderColor: "#fca5a5",
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  messageText: {
+    color: "#991b1b",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  successBox: {
+    marginBottom: 20,
+    padding: 16,
+    backgroundColor: "#dcfce7",
+    borderColor: "#86efac",
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  successText: {
+    color: "#166534",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  card: {
+    marginBottom: 40,
+    padding: 18,
+    backgroundColor: "#ffffff",
+    borderColor: "#e2e8f0",
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  cardTitle: {
+    marginBottom: 10,
+    color: "#0f172a",
+    fontSize: 20,
+    fontWeight: "900",
+  },
+  status: {
+    marginBottom: 12,
+    color: "#16a34a",
+    fontSize: 24,
+    fontWeight: "900",
+  },
+  detailLabel: {
+    marginTop: 10,
+    marginBottom: 4,
+    color: "#334155",
+    fontSize: 13,
+    fontWeight: "800",
+    textTransform: "uppercase",
+  },
+  detailText: {
+    marginBottom: 3,
+    color: "#0f172a",
+    fontSize: 16,
+  },
+  mobileNotice: {
+    marginTop: 18,
+    padding: 14,
+    backgroundColor: "#e0f2fe",
+    borderColor: "#7dd3fc",
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  mobileNoticeTitle: {
+    marginBottom: 4,
+    color: "#075985",
+    fontSize: 14,
+    fontWeight: "900",
+  },
+  mobileNoticeText: {
+    color: "#075985",
+    fontSize: 14,
+    lineHeight: 20,
+  },
+});
+
+
+
+
+==================================================
+FILE: .\joy-ride-driver-app\app\(tabs)\availability.tsx
+==================================================
+import { API_BASE_URL } from '@/constants/api';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+type Driver = {
+  id: string;
+  fullName: string;
+  phone: string;
+  status: string;
+  isOnline: boolean;
+  isAvailable: boolean;
+};
+
+const DRIVER_API_KEY =
+  process.env.EXPO_PUBLIC_DRIVER_LOCATION_API_KEY?.trim() ?? '';
+
+export default function AvailabilityScreen() {
+  const driverId = 'cmqxiib050000dcrih388jp0a';
+  const [driver, setDriver] = useState<Driver | null>(null);
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function updateAvailability(isOnline: boolean, isAvailable?: boolean) {
+try {
+      setIsLoading(true);
+      setMessage('');
+
+      if (!DRIVER_API_KEY) {
+        setMessage('Driver authentication is not configured.');
+        return;
+      }
+
+      const body =
+        isAvailable === undefined
+          ? { isOnline }
+          : { isOnline, isAvailable };
+
+      const response = await fetch(`${API_BASE_URL}/drivers/${driverId.trim()}/availability`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${DRIVER_API_KEY}`,
+          'X-Driver-Id': driverId.trim(),
+        },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.message || 'Could not update availability.');
+        return;
+      }
+
+      setDriver(data);
+      setMessage('Driver availability updated.');
+    } catch {
+      setMessage(`Could not connect to the backend. Make sure the backend server is running on ${API_BASE_URL}.`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function refreshDriver() {
+try {
+      setIsLoading(true);
+      setMessage('');
+
+      if (!DRIVER_API_KEY) {
+        setMessage('Driver authentication is not configured.');
+        return;
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/drivers/${driverId.trim()}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${DRIVER_API_KEY}`,
+            'X-Driver-Id': driverId.trim(),
+          },
+        },
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.message || 'Could not load driver.');
+        return;
+      }
+
+      setDriver(data);
+      setMessage('Driver status loaded.');
+    } catch {
+      setMessage(`Could not connect to the backend. Make sure the backend server is running on ${API_BASE_URL}.`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Driver Availability</Text>
+
+      <Text style={styles.subtitle}>
+        Control whether you are online and available for new Joy Ride assignments.
+      </Text>
+      <View style={styles.testDriverBox}>
+        <Text style={styles.testDriverLabel}>Active test driver</Text>
+        <Text style={styles.testDriverName}>Test Driver Two</Text>
+      </View>
+<TouchableOpacity
+        style={[styles.secondaryButton, isLoading ? styles.disabledButton : null]}
+        onPress={refreshDriver}
+        disabled={isLoading}
+      >
+        <Text style={styles.buttonText}>
+          {isLoading ? 'Loading...' : 'Refresh Driver Status'}
+        </Text>
+      </TouchableOpacity>
+
+      <View style={styles.buttonGrid}>
+        <TouchableOpacity
+          style={[styles.onlineButton, isLoading ? styles.disabledButton : null]}
+          onPress={() => updateAvailability(true, true)}
+          disabled={isLoading}
+        >
+          <Text style={styles.buttonText}>Go Online</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.offlineButton, isLoading ? styles.disabledButton : null]}
+          onPress={() => updateAvailability(false)}
+          disabled={isLoading}
+        >
+          <Text style={styles.buttonText}>Go Offline</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.availableButton, isLoading ? styles.disabledButton : null]}
+          onPress={() => updateAvailability(true, true)}
+          disabled={isLoading}
+        >
+          <Text style={styles.buttonText}>Mark Available</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.unavailableButton, isLoading ? styles.disabledButton : null]}
+          onPress={() => updateAvailability(true, false)}
+          disabled={isLoading}
+        >
+          <Text style={styles.buttonText}>Mark Unavailable</Text>
+        </TouchableOpacity>
+      </View>
+
+      {message ? (
+        <View style={driver ? styles.successMessageBox : styles.messageBox}>
+          <Text style={driver ? styles.successMessageText : styles.messageText}>
+            {message}
+          </Text>
+        </View>
+      ) : null}
+
+      {driver ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>{driver.fullName}</Text>
+          <Text style={styles.detailText}>{driver.phone}</Text>
+
+          <View style={styles.divider} />
+
+          <Text style={styles.detailLabel}>Driver Status</Text>
+          <Text style={styles.detailText}>{driver.status}</Text>
+
+          <Text style={styles.detailLabel}>Online</Text>
+          <Text style={driver.isOnline ? styles.goodStatus : styles.badStatus}>
+            {driver.isOnline ? 'YES' : 'NO'}
+          </Text>
+
+          <Text style={styles.detailLabel}>Available</Text>
+          <Text style={driver.isAvailable ? styles.goodStatus : styles.badStatus}>
+            {driver.isAvailable ? 'YES' : 'NO'}
+          </Text>
+
+          <Text style={styles.footerNote}>
+            Admin assignment will only work when the driver is approved, online, and available.
+          </Text>
+        </View>
+      ) : null}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+    testDriverBox: {
+    backgroundColor: "#ecfdf5",
+    borderWidth: 1,
+    borderColor: "#6ee7b7",
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 14,
+  },
+  testDriverLabel: {
+    color: "#047857",
+    fontSize: 12,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  testDriverName: {
+    color: "#065f46",
+    fontSize: 17,
+    fontWeight: "900",
+  },
+container: {
+    padding: 24,
+    backgroundColor: '#f8fafc',
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: '900',
+    color: '#0f172a',
+    textAlign: 'center',
+    marginBottom: 12,
+    marginTop: 24,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#475569',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 24,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#334155',
+    marginBottom: 6,
+  },
+  input: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 16,
+    marginBottom: 14,
+  },
+  secondaryButton: {
+    backgroundColor: '#475569',
+    paddingVertical: 14,
+    borderRadius: 14,
+    marginBottom: 14,
+  },
+  buttonGrid: {
+    gap: 12,
+    marginBottom: 18,
+  },
+  onlineButton: {
+    backgroundColor: '#16a34a',
+    paddingVertical: 14,
+    borderRadius: 14,
+  },
+  offlineButton: {
+    backgroundColor: '#dc2626',
+    paddingVertical: 14,
+    borderRadius: 14,
+  },
+  availableButton: {
+    backgroundColor: '#2563eb',
+    paddingVertical: 14,
+    borderRadius: 14,
+  },
+  unavailableButton: {
+    backgroundColor: '#f59e0b',
+    paddingVertical: 14,
+    borderRadius: 14,
+  },
+  disabledButton: {
+    backgroundColor: '#94a3b8',
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+  messageBox: {
+    backgroundColor: '#fee2e2',
+    borderWidth: 1,
+    borderColor: '#fca5a5',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+  },
+  messageText: {
+    color: '#991b1b',
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '600',
+  },
+  successMessageBox: {
+    backgroundColor: '#dcfce7',
+    borderWidth: 1,
+    borderColor: '#86efac',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+  },
+  successMessageText: {
+    color: '#166534',
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '700',
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginBottom: 40,
+  },
+  cardTitle: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#0f172a',
+    marginBottom: 4,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#e2e8f0',
+    marginVertical: 16,
+  },
+  detailLabel: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#334155',
+    marginTop: 10,
+    marginBottom: 4,
+    textTransform: 'uppercase',
+  },
+  detailText: {
+    fontSize: 16,
+    color: '#0f172a',
+    marginBottom: 3,
+  },
+  goodStatus: {
+    fontSize: 22,
+    color: '#16a34a',
+    fontWeight: '900',
+  },
+  badStatus: {
+    fontSize: 22,
+    color: '#dc2626',
+    fontWeight: '900',
+  },
+  footerNote: {
+    marginTop: 18,
+    textAlign: 'center',
+    color: '#475569',
+    fontWeight: '700',
+    lineHeight: 20,
+  },
+});
+
+
+
+
+==================================================
+FILE: .\joy-ride-driver-app\hooks\use-driver-location-tracking.ts
+==================================================
+import { API_BASE_URL } from "@/constants/api";
+import * as Location from "expo-location";
+import { Platform } from "react-native";
+import { useEffect, useRef, useState } from "react";
+
+type TrackingStatus =
+  "idle" | "requesting-permission" | "tracking" | "permission-denied" | "error";
+
+type LatestLocation = {
+  latitude: number;
+  longitude: number;
+  accuracy: number | null;
+  heading: number | null;
+  speed: number | null;
+  recordedAt: string;
+};
+
+type LocationSample = {
+  latitude: number;
+  longitude: number;
+  accuracy: number | null;
+  heading: number | null;
+  speed: number | null;
+  timestamp: number;
+};
+
+type UseDriverLocationTrackingOptions = {
+  driverId: string;
+  rideId?: string;
+  enabled: boolean;
+};
+
+export function useDriverLocationTracking({
+  driverId,
+  rideId,
+  enabled,
+}: UseDriverLocationTrackingOptions) {
+  const [status, setStatus] = useState<TrackingStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [latestLocation, setLatestLocation] = useState<LatestLocation | null>(
+    null,
+  );
+
+  const isPostingRef = useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    let nativeSubscription: Location.LocationSubscription | null = null;
+    let webWatchId: number | null = null;
+
+    const normalizedDriverId = driverId.trim();
+    const apiKey =
+      process.env.EXPO_PUBLIC_DRIVER_LOCATION_API_KEY?.trim() ?? "";
+
+    async function submitLocation(sample: LocationSample) {
+      if (cancelled || isPostingRef.current) {
+        return;
+      }
+
+      isPostingRef.current = true;
+
+      try {
+        const payload = {
+          driverId: normalizedDriverId,
+          rideId: rideId || undefined,
+          latitude: sample.latitude,
+          longitude: sample.longitude,
+          accuracy: sample.accuracy ?? undefined,
+          heading:
+            sample.heading !== null && sample.heading >= 0
+              ? sample.heading
+              : undefined,
+          speed:
+            sample.speed !== null && sample.speed >= 0
+              ? sample.speed
+              : undefined,
+          recordedAt: new Date(sample.timestamp).toISOString(),
+        };
+
+        const response = await fetch(
+          `${API_BASE_URL}/driver-locations/upsert`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${apiKey}`,
+              "X-Driver-Id": normalizedDriverId,
+            },
+            body: JSON.stringify(payload),
+          },
+        );
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error(
+              "Driver location authentication failed. Restart Expo after checking the configured API key.",
+            );
+          }
+
+          throw new Error(
+            data?.message || "The backend rejected the location update.",
+          );
+        }
+
+        if (!cancelled) {
+          setLatestLocation({
+            latitude: sample.latitude,
+            longitude: sample.longitude,
+            accuracy: sample.accuracy,
+            heading: sample.heading,
+            speed: sample.speed,
+            recordedAt: payload.recordedAt,
+          });
+
+          setStatus("tracking");
+          setErrorMessage("");
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setStatus("error");
+          setErrorMessage(
+            error instanceof Error
+              ? error.message
+              : "Could not submit the driver location.",
+          );
+        }
+      } finally {
+        isPostingRef.current = false;
+      }
+    }
+
+    async function startNativeTracking() {
+      setStatus("requesting-permission");
+
+      const permission = await Location.requestForegroundPermissionsAsync();
+
+      if (cancelled) {
+        return;
+      }
+
+      if (permission.status !== "granted") {
+        setStatus("permission-denied");
+        setErrorMessage(
+          "Location permission is required to share the driver position.",
+        );
+        return;
+      }
+
+      const servicesEnabled = await Location.hasServicesEnabledAsync();
+
+      if (!servicesEnabled) {
+        setStatus("error");
+        setErrorMessage(
+          "Location services are turned off. Enable GPS and try again.",
+        );
+        return;
+      }
+
+      nativeSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 10_000,
+          distanceInterval: 10,
+        },
+        (location) => {
+          void submitLocation({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            accuracy: location.coords.accuracy,
+            heading: location.coords.heading,
+            speed: location.coords.speed,
+            timestamp: location.timestamp,
+          });
+        },
+      );
+
+      if (!cancelled) {
+        setStatus("tracking");
+      }
+    }
+
+    function startWebTracking() {
+      if (typeof navigator === "undefined" || !navigator.geolocation) {
+        setStatus("error");
+        setErrorMessage("Location tracking is not supported by this browser.");
+        return;
+      }
+
+      setStatus("requesting-permission");
+
+      webWatchId = navigator.geolocation.watchPosition(
+        (position) => {
+          if (!cancelled) {
+            setStatus("tracking");
+            setErrorMessage("");
+          }
+
+          void submitLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            heading: position.coords.heading,
+            speed: position.coords.speed,
+            timestamp: position.timestamp,
+          });
+        },
+        (error) => {
+          if (cancelled) {
+            return;
+          }
+
+          if (error.code === error.PERMISSION_DENIED) {
+            setStatus("permission-denied");
+            setErrorMessage(
+              "Location permission was denied in the browser. Allow location access and refresh the page.",
+            );
+            return;
+          }
+
+          setStatus("error");
+          setErrorMessage(
+            error.message || "The browser could not retrieve your location.",
+          );
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 5_000,
+          timeout: 20_000,
+        },
+      );
+    }
+
+    function startTracking() {
+      if (!enabled || !normalizedDriverId) {
+        setStatus("idle");
+        setErrorMessage("");
+        setLatestLocation(null);
+        return;
+      }
+
+      if (!apiKey) {
+        setStatus("error");
+        setErrorMessage(
+          "Driver location authentication is required. Restart Expo after configuring the API key.",
+        );
+        return;
+      }
+
+      setErrorMessage("");
+
+      if (Platform.OS === "web") {
+        startWebTracking();
+        return;
+      }
+
+      void startNativeTracking();
+    }
+
+    startTracking();
+
+    return () => {
+      cancelled = true;
+
+      if (webWatchId !== null && typeof navigator !== "undefined") {
+        navigator.geolocation.clearWatch(webWatchId);
+      }
+
+      if (Platform.OS !== "web") {
+        nativeSubscription?.remove();
+      }
+    };
+  }, [driverId, enabled, rideId]);
+
+  return {
+    status,
+    errorMessage,
+    latestLocation,
+    isTracking: status === "tracking",
+  };
+}
+
+==================================================
+FILE: .\joy-ride-rider-app\package.json
+==================================================
+{
+  "name": "joy-ride-rider-app",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "expo start",
+    "reset-project": "node ./scripts/reset-project.js",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "@react-navigation/bottom-tabs": "^7.4.0",
+    "@react-navigation/elements": "^2.6.3",
+    "@react-navigation/native": "^7.1.8",
+    "expo": "~54.0.37",
+    "expo-constants": "~18.0.14",
+    "expo-font": "~14.0.11",
+    "expo-haptics": "~15.0.8",
+    "expo-image": "~3.0.11",
+    "expo-linking": "~8.0.12",
+    "expo-location": "~19.0.8",
+    "expo-router": "~6.0.23",
+    "expo-splash-screen": "~31.0.13",
+    "expo-status-bar": "~3.0.9",
+    "expo-symbols": "~1.0.8",
+    "expo-system-ui": "~6.0.9",
+    "expo-updates": "~29.0.20",
+    "expo-web-browser": "~15.0.11",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-maps": "1.20.1",
+    "react-native-reanimated": "~4.1.1",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.5.1"
+  },
+  "devDependencies": {
+    "@expo/ngrok": "^4.1.3",
+    "@types/react": "~19.1.0",
+    "eslint": "^9.25.0",
+    "eslint-config-expo": "~10.0.0",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
+
+==================================================
+FILE: .\joy-ride-rider-app\app\_layout.tsx
+==================================================
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import 'react-native-reanimated';
+
+import { useColorScheme } from '@/hooks/use-color-scheme';
+
+export const unstable_settings = {
+  anchor: '(tabs)',
+};
+
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
+  );
+}
+
+==================================================
+FILE: .\joy-ride-rider-app\app\(tabs)\_layout.tsx
+==================================================
+import { Tabs } from 'expo-router';
+import React from 'react';
+
+import { HapticTab } from '@/components/haptic-tab';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+
+export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        headerShown: false,
+        tabBarButton: HapticTab,
+      }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+        }}
+      />
+    </Tabs>
+  );
+}
+
+==================================================
+FILE: .\joy-ride-rider-app\app\(tabs)\index.tsx
+==================================================
+import * as Updates from "expo-updates";
+import { router } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+export default function HomeScreen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.logo}>Joy Ride</Text>
+
+      <Text style={styles.title}>Your ride around Papua New Guinea</Text>
+
+      <Text style={styles.subtitle}>
+        Request a ride, track your trip status, and view your receipt when your
+        ride is completed.
+      </Text>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>What would you like to do?</Text>
+
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={() => router.push("/request-ride")}
+        >
+          <Text style={styles.primaryButtonText}>Request a Ride</Text>
+          <Text style={styles.buttonHint}>Create a new ride request</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={() => router.push("/ride-status")}
+        >
+          <Text style={styles.secondaryButtonText}>Check Ride Status</Text>
+          <Text style={styles.secondaryButtonHint}>
+            Track your requested or active ride
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={() => router.push("/receipt")}
+        >
+          <Text style={styles.secondaryButtonText}>View Receipt</Text>
+          <Text style={styles.secondaryButtonHint}>
+            View receipt after your ride is completed
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.updateStatus}>
+        {Updates.updateId ? "OTA Update Active" : "Embedded APK"}
+      </Text>
+
+      <Text style={styles.footer}>Explore PNG Platform MVP</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    justifyContent: "center",
+    backgroundColor: "#f8fafc",
+  },
+  logo: {
+    fontSize: 42,
+    fontWeight: "900",
+    color: "#0f172a",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 23,
+    fontWeight: "800",
+    color: "#1e293b",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#475569",
+    textAlign: "center",
+    lineHeight: 24,
+    marginBottom: 28,
+  },
+  card: {
+    backgroundColor: "#ffffff",
+    borderRadius: 18,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  cardTitle: {
+    fontSize: 17,
+    fontWeight: "800",
+    color: "#0f172a",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  primaryButton: {
+    backgroundColor: "#2563eb",
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    marginBottom: 14,
+  },
+  primaryButtonText: {
+    color: "#ffffff",
+    fontSize: 17,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  buttonHint: {
+    color: "#dbeafe",
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 4,
+  },
+  secondaryButton: {
+    backgroundColor: "#f8fafc",
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    marginBottom: 14,
+  },
+  secondaryButtonText: {
+    color: "#1e293b",
+    fontSize: 17,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  secondaryButtonHint: {
+    color: "#64748b",
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 4,
+  },
+  updateStatus: {
+    marginTop: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignSelf: "center",
+    color: "#166534",
+    backgroundColor: "#dcfce7",
+    borderColor: "#86efac",
+    borderRadius: 999,
+    borderWidth: 1,
+    fontSize: 12,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  footer: {
+    marginTop: 18,
+    textAlign: "center",
+    color: "#94a3b8",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+});
+
+==================================================
+FILE: .\joy-ride-rider-app\app\(tabs)\request-ride.tsx
+==================================================
+import { API_BASE_URL } from '@/constants/api';
+import * as Location from 'expo-location';
+import { router } from 'expo-router';
+import { useRef, useState } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import MapView, {
+  Marker,
+  PROVIDER_GOOGLE,
+  type LatLng,
+  type MapPressEvent,
+} from 'react-native-maps';
+
+const PORT_MORESBY_REGION = {
+  latitude: -9.4438,
+  longitude: 147.1803,
+  latitudeDelta: 0.10,
+  longitudeDelta: 0.10,
+};
+
+type SelectionMode = 'pickup' | 'dropoff';
+
+function buildReadableAddress(
+  address: Location.LocationGeocodedAddress | null,
+): string {
+  if (!address) {
+    return '';
+  }
+
+  const values = [
+    address.name,
+    address.street,
+    address.district,
+    address.subregion,
+    address.city,
+    address.region,
+    address.country,
+  ].filter(
+    (value, index, array): value is string =>
+      Boolean(value) &&
+      array.indexOf(value) === index,
+  );
+
+  return values.join(', ');
+}
+
+export default function RequestRideScreen() {
+  const mapRef = useRef<MapView | null>(null);
+
+  const [riderName, setRiderName] = useState('');
+  const [riderPhoneLocal, setRiderPhoneLocal] = useState('');
+
+  const [pickupLabel, setPickupLabel] = useState('');
+  const [pickupAddress, setPickupAddress] = useState('');
+  const [pickupCoordinate, setPickupCoordinate] =
+    useState<LatLng | null>(null);
+
+  const [dropoffLabel, setDropoffLabel] = useState('');
+  const [dropoffAddress, setDropoffAddress] = useState('');
+  const [dropoffCoordinate, setDropoffCoordinate] =
+    useState<LatLng | null>(null);
+
+  const [estimatedFare, setEstimatedFare] = useState('');
+
+  const [selectionMode, setSelectionMode] =
+    useState<SelectionMode>('pickup');
+
+  const [message, setMessage] = useState('');
+  const [createdRideId, setCreatedRideId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
+
+  async function ensureLocationPermission() {
+    const current =
+      await Location.getForegroundPermissionsAsync();
+
+    if (current.status === 'granted') {
+      return true;
+    }
+
+    const requested =
+      await Location.requestForegroundPermissionsAsync();
+
+    if (requested.status !== 'granted') {
+      setMessage(
+        'Location permission is required to select accurate pickup and drop-off points.',
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  function focusCoordinate(coordinate: LatLng) {
+    mapRef.current?.animateToRegion(
+      {
+        ...coordinate,
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.015,
+      },
+      600,
+    );
+  }
+
+  async function reverseAddress(
+    coordinate: LatLng,
+    target: SelectionMode,
+  ) {
+    try {
+      const results =
+        await Location.reverseGeocodeAsync(coordinate);
+
+      const address =
+        buildReadableAddress(results[0] ?? null);
+
+      if (!address) {
+        return;
+      }
+
+      if (target === 'pickup') {
+        setPickupAddress(address);
+      } else {
+        setDropoffAddress(address);
+      }
+    } catch {
+      // The coordinate remains authoritative even if
+      // reverse geocoding cannot provide a street name.
+    }
+  }
+
+  async function useCurrentLocationForPickup() {
+    try {
+      setIsLocating(true);
+      setMessage('');
+
+      const allowed = await ensureLocationPermission();
+
+      if (!allowed) {
+        return;
+      }
+
+      const current =
+        await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+
+      const coordinate = {
+        latitude: current.coords.latitude,
+        longitude: current.coords.longitude,
+      };
+
+      setPickupCoordinate(coordinate);
+      setSelectionMode('pickup');
+
+      focusCoordinate(coordinate);
+
+      await reverseAddress(coordinate, 'pickup');
+    } catch {
+      setMessage(
+        'Unable to read your current GPS location. Check that Location is enabled on your phone.',
+      );
+    } finally {
+      setIsLocating(false);
+    }
+  }
+
+  async function locateTypedPlace(
+    target: SelectionMode,
+  ) {
+    const label =
+      target === 'pickup'
+        ? pickupLabel.trim()
+        : dropoffLabel.trim();
+
+    const address =
+      target === 'pickup'
+        ? pickupAddress.trim()
+        : dropoffAddress.trim();
+
+    if (!label && !address) {
+      setMessage(
+        `Enter the ${target === 'pickup' ? 'pickup' : 'drop-off'} location name or address first.`,
+      );
+      return;
+    }
+
+    try {
+      setIsLocating(true);
+      setMessage('');
+
+      const allowed = await ensureLocationPermission();
+
+      if (!allowed) {
+        return;
+      }
+
+      const searchText = [
+        label,
+        address,
+        'Port Moresby',
+        'Papua New Guinea',
+      ]
+        .filter(Boolean)
+        .join(', ');
+
+      const results =
+        await Location.geocodeAsync(searchText);
+
+      if (!results.length) {
+        setMessage(
+          `Location could not be found. Use the map and place the ${target === 'pickup' ? 'green pickup' : 'red drop-off'} pin manually.`,
+        );
+        return;
+      }
+
+      const coordinate = {
+        latitude: results[0].latitude,
+        longitude: results[0].longitude,
+      };
+
+      if (target === 'pickup') {
+        setPickupCoordinate(coordinate);
+      } else {
+        setDropoffCoordinate(coordinate);
+      }
+
+      setSelectionMode(target);
+      focusCoordinate(coordinate);
+
+      await reverseAddress(coordinate, target);
+    } catch {
+      setMessage(
+        'Unable to resolve that location. Please select the exact point directly on the map.',
+      );
+    } finally {
+      setIsLocating(false);
+    }
+  }
+
+  async function updateCoordinate(
+    coordinate: LatLng,
+    target: SelectionMode,
+  ) {
+    if (target === 'pickup') {
+      setPickupCoordinate(coordinate);
+    } else {
+      setDropoffCoordinate(coordinate);
+    }
+
+    await reverseAddress(coordinate, target);
+  }
+
+  function handleMapPress(event: MapPressEvent) {
+    const coordinate =
+      event.nativeEvent.coordinate;
+
+    void updateCoordinate(
+      coordinate,
+      selectionMode,
+    );
+  }
+
+  async function submitRideRequest() {
+    const cleanLocalPhone =
+      riderPhoneLocal.replace(/\D/g, '');
+
+    const riderPhone =
+      `+675${cleanLocalPhone}`;
+
+    if (
+      !riderName.trim() ||
+      !cleanLocalPhone ||
+      !pickupLabel.trim() ||
+      !pickupAddress.trim() ||
+      !dropoffLabel.trim() ||
+      !dropoffAddress.trim() ||
+      !estimatedFare.trim()
+    ) {
+      setMessage(
+        'Please fill in all required ride details.',
+      );
+      return;
+    }
+
+    if (cleanLocalPhone.length !== 8) {
+      setMessage(
+        'Please enter a valid PNG mobile number with 8 digits.',
+      );
+      return;
+    }
+
+    if (!pickupCoordinate) {
+      setMessage(
+        'Select the exact pickup location using the green pickup pin.',
+      );
+      return;
+    }
+
+    if (!dropoffCoordinate) {
+      setMessage(
+        'Select the exact drop-off location using the red drop-off pin.',
+      );
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setMessage('');
+      setCreatedRideId('');
+
+      const response = await fetch(
+        `${API_BASE_URL}/rides`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            rideType: 'STANDARD',
+
+            riderName: riderName.trim(),
+            riderPhone,
+
+            pickupLabel: pickupLabel.trim(),
+            pickupAddress: pickupAddress.trim(),
+
+            pickupLatitude:
+              pickupCoordinate.latitude,
+
+            pickupLongitude:
+              pickupCoordinate.longitude,
+
+            dropoffLabel: dropoffLabel.trim(),
+            dropoffAddress:
+              dropoffAddress.trim(),
+
+            dropoffLatitude:
+              dropoffCoordinate.latitude,
+
+            dropoffLongitude:
+              dropoffCoordinate.longitude,
+
+            estimatedFare:
+              Number(estimatedFare),
+
+            notes:
+              'Created from Joy Ride Rider App',
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(
+          Array.isArray(data.message)
+            ? data.message.join('\n')
+            : data.message ||
+                'Failed to create ride request.',
+        );
+        return;
+      }
+
+      setCreatedRideId(data.id);
+
+      setMessage(
+        `Ride request submitted successfully.\n\nPickup: ${data.pickupLabel}\nDrop-off: ${data.dropoffLabel}\nStatus: ${data.status}`,
+      );
+    } catch {
+      setMessage(
+        `Could not connect to the backend at ${API_BASE_URL}.`,
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Text style={styles.title}>
+        Request a Ride
+      </Text>
+
+      <Text style={styles.label}>
+        Rider Name
+      </Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Example: John Kila"
+        value={riderName}
+        onChangeText={setRiderName}
+      />
+
+      <Text style={styles.label}>
+        Rider Phone
+      </Text>
+
+      <View style={styles.phoneRow}>
+        <View style={styles.countryCodeBox}>
+          <Text style={styles.countryCodeText}>
+            +675
+          </Text>
+        </View>
+
+        <TextInput
+          style={styles.phoneInput}
+          placeholder="Example: 81188769"
+          keyboardType="phone-pad"
+          value={riderPhoneLocal}
+          onChangeText={setRiderPhoneLocal}
+          maxLength={8}
+        />
+      </View>
+
+      <View style={styles.sectionCard}>
+        <Text style={styles.sectionTitle}>
+          Pickup
+        </Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Example: Crown Hotel"
+          value={pickupLabel}
+          onChangeText={setPickupLabel}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Example: Downtown, Port Moresby"
+          value={pickupAddress}
+          onChangeText={setPickupAddress}
+        />
+
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.pickupButton}
+            onPress={useCurrentLocationForPickup}
+            disabled={isLocating}
+          >
+            <Text style={styles.mapButtonText}>
+              Use My Location
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.pickupButton}
+            onPress={() =>
+              void locateTypedPlace('pickup')
+            }
+            disabled={isLocating}
+          >
+            <Text style={styles.mapButtonText}>
+              Find Pickup
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.sectionCard}>
+        <Text style={styles.sectionTitle}>
+          Drop-off
+        </Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Example: Jacksons Airport"
+          value={dropoffLabel}
+          onChangeText={setDropoffLabel}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Example: Jacksons International Airport"
+          value={dropoffAddress}
+          onChangeText={setDropoffAddress}
+        />
+
+        <TouchableOpacity
+          style={styles.dropoffButton}
+          onPress={() =>
+            void locateTypedPlace('dropoff')
+          }
+          disabled={isLocating}
+        >
+          <Text style={styles.mapButtonText}>
+            Find Drop-off
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.selectorRow}>
+        <TouchableOpacity
+          style={[
+            styles.selectorButton,
+            selectionMode === 'pickup' &&
+              styles.selectorPickupActive,
+          ]}
+          onPress={() =>
+            setSelectionMode('pickup')
+          }
+        >
+          <Text style={styles.selectorText}>
+            Place Pickup Pin
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.selectorButton,
+            selectionMode === 'dropoff' &&
+              styles.selectorDropoffActive,
+          ]}
+          onPress={() =>
+            setSelectionMode('dropoff')
+          }
+        >
+          <Text style={styles.selectorText}>
+            Place Drop-off Pin
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.mapContainer}>
+        <MapView
+          ref={mapRef}
+          provider={PROVIDER_GOOGLE}
+          style={styles.map}
+          initialRegion={PORT_MORESBY_REGION}
+          mapType="standard"
+          showsUserLocation
+          showsCompass
+          showsBuildings
+          onPress={handleMapPress}
+        >
+          {pickupCoordinate ? (
+            <Marker
+              coordinate={pickupCoordinate}
+              draggable
+              pinColor="#16a34a"
+              title="PICKUP"
+              description={
+                pickupAddress ||
+                pickupLabel ||
+                undefined
+              }
+              onDragEnd={(event) =>
+                void updateCoordinate(
+                  event.nativeEvent.coordinate,
+                  'pickup',
+                )
+              }
+            />
+          ) : null}
+
+          {dropoffCoordinate ? (
+            <Marker
+              coordinate={dropoffCoordinate}
+              draggable
+              pinColor="#dc2626"
+              title="DROP-OFF"
+              description={
+                dropoffAddress ||
+                dropoffLabel ||
+                undefined
+              }
+              onDragEnd={(event) =>
+                void updateCoordinate(
+                  event.nativeEvent.coordinate,
+                  'dropoff',
+                )
+              }
+            />
+          ) : null}
+        </MapView>
+      </View>
+
+      <View style={styles.coordinateBox}>
+        <Text style={styles.coordinateTitle}>
+          Selected Pickup
+        </Text>
+
+        <Text style={styles.coordinateText}>
+          {pickupCoordinate
+            ? `${pickupLabel || 'Pickup'} — ${pickupAddress || 'Address selected'}`
+            : 'Pickup pin not selected'}
+        </Text>
+
+        <Text style={styles.coordinateTitle}>
+          Selected Drop-off
+        </Text>
+
+        <Text style={styles.coordinateText}>
+          {dropoffCoordinate
+            ? `${dropoffLabel || 'Drop-off'} — ${dropoffAddress || 'Address selected'}`
+            : 'Drop-off pin not selected'}
+        </Text>
+      </View>
+
+      <Text style={styles.label}>
+        Estimated Fare
+      </Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Example: 100"
+        keyboardType="numeric"
+        value={estimatedFare}
+        onChangeText={setEstimatedFare}
+      />
+
+      <TouchableOpacity
+        style={[
+          styles.primaryButton,
+          isSubmitting
+            ? styles.disabledButton
+            : null,
+        ]}
+        onPress={submitRideRequest}
+        disabled={isSubmitting}
+      >
+        <Text style={styles.primaryButtonText}>
+          {isSubmitting
+            ? 'Submitting...'
+            : 'Submit Ride Request'}
+        </Text>
+      </TouchableOpacity>
+
+      {message ? (
+        <View
+          style={
+            createdRideId
+              ? styles.successBox
+              : styles.messageBox
+          }
+        >
+          <Text
+            style={
+              createdRideId
+                ? styles.successText
+                : styles.messageText
+            }
+          >
+            {message}
+          </Text>
+
+          {createdRideId ? (
+            <TouchableOpacity
+              style={styles.statusButton}
+              onPress={() =>
+                router.push({
+                  pathname: '/ride-status',
+                  params: {
+                    rideId: createdRideId,
+                  },
+                })
+              }
+            >
+              <Text style={styles.statusButtonText}>
+                Track My Ride
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      ) : null}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor: '#f8fafc',
+  },
+
+  title: {
+    fontSize: 30,
+    fontWeight: '800',
+    color: '#0f172a',
+    textAlign: 'center',
+    marginBottom: 22,
+    marginTop: 24,
+  },
+
+  label: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#334155',
+    marginBottom: 6,
+  },
+
+  input: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 16,
+    marginBottom: 12,
+  },
+
+  phoneRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+
+  countryCodeBox: {
+    backgroundColor: '#e2e8f0',
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+
+  countryCodeText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+
+  phoneInput: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderLeftWidth: 0,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 16,
+  },
+
+  sectionCard: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 14,
+  },
+
+  sectionTitle: {
+    color: '#0f172a',
+    fontSize: 17,
+    fontWeight: '900',
+    marginBottom: 10,
+  },
+
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+
+  pickupButton: {
+    flex: 1,
+    backgroundColor: '#16a34a',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+  },
+
+  dropoffButton: {
+    backgroundColor: '#dc2626',
+    borderRadius: 10,
+    paddingVertical: 12,
+  },
+
+  mapButtonText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 13,
+    fontWeight: '900',
+  },
+
+  selectorRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 10,
+  },
+
+  selectorButton: {
+    flex: 1,
+    backgroundColor: '#64748b',
+    borderRadius: 10,
+    paddingVertical: 11,
+  },
+
+  selectorPickupActive: {
+    backgroundColor: '#16a34a',
+  },
+
+  selectorDropoffActive: {
+    backgroundColor: '#dc2626',
+  },
+
+  selectorText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '900',
+  },
+
+  mapContainer: {
+    height: 420,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    marginBottom: 12,
+  },
+
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+
+  coordinateBox: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    padding: 12,
+    marginBottom: 16,
+  },
+
+  coordinateTitle: {
+    color: '#334155',
+    fontSize: 12,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    marginTop: 4,
+  },
+
+  coordinateText: {
+    color: '#0f172a',
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '700',
+    marginTop: 3,
+    marginBottom: 8,
+  },
+
+  primaryButton: {
+    backgroundColor: '#2563eb',
+    paddingVertical: 16,
+    borderRadius: 14,
+    marginTop: 10,
+    marginBottom: 18,
+  },
+
+  disabledButton: {
+    backgroundColor: '#94a3b8',
+  },
+
+  primaryButtonText: {
+    color: '#ffffff',
+    fontSize: 17,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+
+  messageBox: {
+    backgroundColor: '#fee2e2',
+    borderWidth: 1,
+    borderColor: '#fca5a5',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 40,
+  },
+
+  messageText: {
+    color: '#991b1b',
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '600',
+  },
+
+  successBox: {
+    backgroundColor: '#dcfce7',
+    borderWidth: 1,
+    borderColor: '#86efac',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 40,
+  },
+
+  successText: {
+    color: '#166534',
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '600',
+  },
+
+  statusButton: {
+    backgroundColor: '#16a34a',
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 16,
+  },
+
+  statusButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+});
+
+==================================================
+FILE: .\joy-ride-rider-app\app\(tabs)\ride-status.tsx
+==================================================
+import { API_BASE_URL } from '@/constants/api';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import {
+  RiderLiveTripMap,
+} from '../../components/rider-live-trip-map';
+
+type Ride = {
+  id: string;
+  status: string;
+  riderName: string;
+  riderPhone: string;
+  pickupLabel: string | null;
+  pickupAddress: string | null;
+  pickupLatitude: number | null;
+  pickupLongitude: number | null;
+  dropoffLabel: string | null;
+  dropoffAddress: string | null;
+  dropoffLatitude: number | null;
+  dropoffLongitude: number | null;
+  estimatedFare: number | null;
+  finalFare: number | null;
+  driver?: {
+    id: string;
+    fullName: string;
+    phone: string;
+  } | null;
+  vehicle?: {
+    id: string;
+    plateNumber: string;
+    make: string;
+    model: string;
+    color: string;
+  } | null;
+};
+
+const ACTIVE_REFRESH_INTERVAL_MS = 5000;
+
+export default function RideStatusScreen() {
+  const params = useLocalSearchParams<{
+    rideId?: string | string[];
+  }>();
+
+  const rideId = Array.isArray(params.rideId)
+    ? params.rideId[0]
+    : params.rideId;
+
+  const [ride, setRide] = useState<Ride | null>(null);
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const checkRideStatusById = useCallback(
+    async (idToCheck: string, isAutoRefresh = false) => {
+      const cleanRideId = idToCheck.trim();
+
+      if (!cleanRideId) {
+        setMessage(
+          'No ride was selected. Please submit a ride request first.',
+        );
+        setRide(null);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        if (isAutoRefresh) {
+          setIsRefreshing(true);
+        } else {
+          setIsLoading(true);
+          setMessage('');
+        }
+
+        const response = await fetch(
+          `${API_BASE_URL}/rides/${cleanRideId}`,
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          if (!isAutoRefresh) {
+            setMessage(data.message || 'Ride not found.');
+            setRide(null);
+          }
+
+          return;
+        }
+
+        setRide(data);
+        setMessage('');
+      } catch {
+        if (!isAutoRefresh) {
+          setMessage(
+            `Could not connect to the backend. Check your internet connection and API URL: ${API_BASE_URL}`,
+          );
+        }
+      } finally {
+        if (isAutoRefresh) {
+          setIsRefreshing(false);
+        } else {
+          setIsLoading(false);
+        }
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!rideId) {
+      setMessage(
+        'No ride was selected. Please submit a ride request first.',
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    checkRideStatusById(rideId);
+  }, [rideId, checkRideStatusById]);
+
+  useEffect(() => {
+    if (
+      !ride ||
+      ride.status === 'COMPLETED' ||
+      ride.status === 'CANCELLED'
+    ) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      checkRideStatusById(ride.id, true);
+    }, ACTIVE_REFRESH_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [ride, checkRideStatusById]);
+
+  function getStatusMessage(status: string) {
+    switch (status) {
+      case 'REQUESTED':
+        return 'Your ride request has been received. Waiting for a driver to be assigned.';
+
+      case 'ACCEPTED':
+        return 'A driver has accepted your ride and is heading to the pickup location.';
+
+      case 'DRIVER_ARRIVED':
+        return 'Your driver has arrived at the pickup location.';
+
+      case 'IN_PROGRESS':
+        return 'Your ride is currently in progress.';
+
+      case 'COMPLETED':
+        return 'Your ride has been completed.';
+
+      case 'CANCELLED':
+        return 'This ride has been cancelled.';
+
+      default:
+        return 'Your ride status is being updated.';
+    }
+  }
+
+  function getStatusLabel(status: string) {
+    return status.replaceAll('_', ' ');
+  }
+
+  const rideIsActive =
+    ride &&
+    ride.status !== 'COMPLETED' &&
+    ride.status !== 'CANCELLED';
+
+  const pickupMapPoint =
+    ride &&
+    ride.pickupLatitude != null &&
+    ride.pickupLongitude != null
+      ? {
+          latitude: ride.pickupLatitude,
+          longitude: ride.pickupLongitude,
+          label:
+            ride.pickupLabel ??
+            ride.pickupAddress,
+        }
+      : null;
+
+  const dropoffMapPoint =
+    ride &&
+    ride.dropoffLatitude != null &&
+    ride.dropoffLongitude != null
+      ? {
+          latitude: ride.dropoffLatitude,
+          longitude: ride.dropoffLongitude,
+          label:
+            ride.dropoffLabel ??
+            ride.dropoffAddress,
+        }
+      : null;
+
+  const vehicleLabel = ride?.vehicle
+    ? `${ride.vehicle.color} ${ride.vehicle.make} ${ride.vehicle.model} - ${ride.vehicle.plateNumber}`
+    : null;
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Ride Status</Text>
+
+      <Text style={styles.subtitle}>
+        Your ride details update automatically.
+      </Text>
+
+      {isLoading ? (
+        <View style={styles.loadingCard}>
+          <ActivityIndicator size="large" />
+
+          <Text style={styles.loadingText}>
+            Loading your ride...
+          </Text>
+        </View>
+      ) : null}
+
+      {message ? (
+        <View style={styles.messageBox}>
+          <Text style={styles.messageText}>
+            {message}
+          </Text>
+
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.replace('/request-ride')}
+          >
+            <Text style={styles.backButtonText}>
+              Request a Ride
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
+      {ride ? (
+        <>
+          <View style={styles.statusCard}>
+            <View style={styles.statusHeader}>
+              <View style={styles.statusTextArea}>
+                <Text style={styles.statusLabel}>
+                  CURRENT STATUS
+                </Text>
+
+                <Text style={styles.status}>
+                  {getStatusLabel(ride.status)}
+                </Text>
+              </View>
+
+              {isRefreshing ? (
+                <ActivityIndicator size="small" />
+              ) : null}
+            </View>
+
+            <Text style={styles.statusMessage}>
+              {getStatusMessage(ride.status)}
+            </Text>
+
+            <View
+              style={[
+                styles.refreshNotice,
+                !rideIsActive
+                  ? styles.refreshNoticeInactive
+                  : null,
+              ]}
+            >
+              <Text style={styles.refreshNoticeText}>
+                {rideIsActive
+                  ? 'Live updates are active and refresh every 5 seconds.'
+                  : 'This ride is no longer active, so automatic updates have stopped.'}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.refreshButton}
+              onPress={() =>
+                checkRideStatusById(ride.id)
+              }
+              disabled={isLoading || isRefreshing}
+            >
+              <Text style={styles.refreshButtonText}>
+                {isRefreshing
+                  ? 'Refreshing...'
+                  : 'Refresh Now'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <RiderLiveTripMap
+            rideId={ride.id}
+            status={ride.status}
+            pickup={pickupMapPoint}
+            dropoff={dropoffMapPoint}
+            driverAssigned={Boolean(
+              ride.driver?.id,
+            )}
+            driverName={
+              ride.driver?.fullName
+            }
+            vehicleLabel={vehicleLabel}
+            trackingEnabled={Boolean(
+              rideIsActive,
+            )}
+          />
+
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>
+              Trip Details
+            </Text>
+
+            <Text style={styles.detailLabel}>
+              Pickup
+            </Text>
+
+            <Text style={styles.detailPrimary}>
+              {ride.pickupLabel || 'Pickup location'}
+            </Text>
+
+            <Text style={styles.detailSecondary}>
+              {ride.pickupAddress || 'Address unavailable'}
+            </Text>
+
+            <View style={styles.routeLine} />
+
+            <Text style={styles.detailLabel}>
+              Drop-off
+            </Text>
+
+            <Text style={styles.detailPrimary}>
+              {ride.dropoffLabel || 'Drop-off location'}
+            </Text>
+
+            <Text style={styles.detailSecondary}>
+              {ride.dropoffAddress || 'Address unavailable'}
+            </Text>
+
+            <View style={styles.divider} />
+
+            <Text style={styles.detailLabel}>
+              Estimated Fare
+            </Text>
+
+            <Text style={styles.fareText}>
+              {ride.estimatedFare == null
+                ? 'Not available'
+                : `K${ride.estimatedFare}`}
+            </Text>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>
+              Driver and Vehicle
+            </Text>
+
+            {ride.driver ? (
+              <>
+                <Text style={styles.detailLabel}>
+                  Driver
+                </Text>
+
+                <Text style={styles.detailPrimary}>
+                  {ride.driver.fullName}
+                </Text>
+
+                <Text style={styles.detailSecondary}>
+                  {ride.driver.phone}
+                </Text>
+              </>
+            ) : (
+              <View style={styles.waitingBox}>
+                <Text style={styles.waitingText}>
+                  A driver has not been assigned yet.
+                </Text>
+              </View>
+            )}
+
+            {ride.vehicle ? (
+              <>
+                <View style={styles.divider} />
+
+                <Text style={styles.detailLabel}>
+                  Vehicle
+                </Text>
+
+                <Text style={styles.detailPrimary}>
+                  {ride.vehicle.color}{' '}
+                  {ride.vehicle.make}{' '}
+                  {ride.vehicle.model}
+                </Text>
+
+                <Text style={styles.detailSecondary}>
+                  Plate: {ride.vehicle.plateNumber}
+                </Text>
+              </>
+            ) : null}
+          </View>
+
+          {ride.status === 'COMPLETED' ? (
+            <TouchableOpacity
+              style={styles.receiptButton}
+              onPress={() =>
+                router.push({
+                  pathname: '/receipt',
+                  params: {
+                    rideId: ride.id,
+                  },
+                })
+              }
+            >
+              <Text style={styles.receiptButtonText}>
+                View Receipt
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </>
+      ) : null}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    padding: 20,
+    paddingTop: 44,
+    backgroundColor: '#f8fafc',
+  },
+
+  title: {
+    fontSize: 30,
+    fontWeight: '900',
+    color: '#0f172a',
+    textAlign: 'center',
+  },
+
+  subtitle: {
+    marginTop: 6,
+    marginBottom: 22,
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#64748b',
+    textAlign: 'center',
+  },
+
+  loadingCard: {
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 18,
+    padding: 28,
+  },
+
+  loadingText: {
+    marginTop: 12,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#475569',
+  },
+
+  messageBox: {
+    backgroundColor: '#fff1f2',
+    borderWidth: 1,
+    borderColor: '#fda4af',
+    borderRadius: 16,
+    padding: 18,
+  },
+
+  messageText: {
+    color: '#9f1239',
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '700',
+  },
+
+  backButton: {
+    marginTop: 16,
+    backgroundColor: '#2563eb',
+    borderRadius: 12,
+    paddingVertical: 13,
+  },
+
+  backButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+
+  statusCard: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#dbeafe',
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 16,
+  },
+
+  statusHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  statusTextArea: {
+    flex: 1,
+  },
+
+  statusLabel: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#64748b',
+    letterSpacing: 0.8,
+  },
+
+  status: {
+    marginTop: 4,
+    fontSize: 25,
+    fontWeight: '900',
+    color: '#2563eb',
+  },
+
+  statusMessage: {
+    marginTop: 8,
+    color: '#475569',
+    fontSize: 15,
+    lineHeight: 22,
+  },
+
+  refreshNotice: {
+    marginTop: 14,
+    backgroundColor: '#ecfeff',
+    borderWidth: 1,
+    borderColor: '#a5f3fc',
+    borderRadius: 12,
+    padding: 12,
+  },
+
+  refreshNoticeInactive: {
+    backgroundColor: '#f1f5f9',
+    borderColor: '#cbd5e1',
+  },
+
+  refreshNoticeText: {
+    color: '#155e75',
+    fontSize: 13,
+    lineHeight: 19,
+    fontWeight: '700',
+  },
+
+  refreshButton: {
+    marginTop: 14,
+    backgroundColor: '#0f172a',
+    borderRadius: 12,
+    paddingVertical: 13,
+  },
+
+  refreshButtonText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '800',
+  },
+
+  card: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 16,
+  },
+
+  cardTitle: {
+    marginBottom: 12,
+    color: '#0f172a',
+    fontSize: 20,
+    fontWeight: '900',
+  },
+
+  detailLabel: {
+    marginTop: 8,
+    marginBottom: 4,
+    color: '#64748b',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 0.7,
+    textTransform: 'uppercase',
+  },
+
+  detailPrimary: {
+    color: '#0f172a',
+    fontSize: 17,
+    lineHeight: 23,
+    fontWeight: '800',
+  },
+
+  detailSecondary: {
+    marginTop: 2,
+    color: '#475569',
+    fontSize: 15,
+    lineHeight: 22,
+  },
+
+  routeLine: {
+    width: 3,
+    height: 25,
+    marginVertical: 4,
+    marginLeft: 6,
+    backgroundColor: '#bfdbfe',
+    borderRadius: 10,
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: '#e2e8f0',
+    marginVertical: 16,
+  },
+
+  fareText: {
+    color: '#166534',
+    fontSize: 22,
+    fontWeight: '900',
+  },
+
+  waitingBox: {
+    backgroundColor: '#fffbeb',
+    borderWidth: 1,
+    borderColor: '#fde68a',
+    borderRadius: 12,
+    padding: 13,
+  },
+
+  waitingText: {
+    color: '#92400e',
+    fontSize: 15,
+    lineHeight: 21,
+    fontWeight: '700',
+  },
+
+  receiptButton: {
+    backgroundColor: '#16a34a',
+    paddingVertical: 15,
+    borderRadius: 14,
+    marginBottom: 40,
+  },
+
+  receiptButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+});
+
+==================================================
+FILE: .\joy-ride-rider-app\app\(tabs)\receipt.tsx
+==================================================
+import { API_BASE_URL } from '@/constants/api';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+type ReceiptResponse = {
+  rideId: string;
+  rideStatus: string;
+  riderName: string;
+  riderPhone: string;
+  pickupLabel: string | null;
+  pickupAddress: string | null;
+  dropoffLabel: string | null;
+  dropoffAddress: string | null;
+  requestedAt: string;
+  completedAt: string;
+  driver: {
+    id: string;
+    fullName: string;
+    phone: string;
+  } | null;
+  vehicle: {
+    id: string;
+    plateNumber: string;
+    make: string;
+    model: string;
+    color: string;
+  } | null;
+  serviceZone: {
+    id: string;
+    name: string;
+  } | null;
+  settlement: {
+    id: string;
+    receiptNumber: string;
+    finalFare: string | number;
+    driverShare: string | number;
+    companyShare: string | number;
+    status: string;
+    createdAt: string;
+  };
+};
+
+export default function ReceiptScreen() {
+  const params = useLocalSearchParams<{
+    rideId?: string | string[];
+  }>();
+
+  const rideId = Array.isArray(params.rideId)
+    ? params.rideId[0]
+    : params.rideId;
+
+  const [receipt, setReceipt] =
+    useState<ReceiptResponse | null>(null);
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchReceipt = useCallback(async () => {
+    if (!rideId?.trim()) {
+      setReceipt(null);
+      setMessage(
+        'No completed ride was selected. Open the receipt from your completed ride status.',
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setMessage('');
+
+      const response = await fetch(
+        `${API_BASE_URL}/rides/${rideId.trim()}/settlement`,
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setReceipt(null);
+        setMessage(
+          data.message ||
+            'Your receipt is not available yet. Please check again after the ride has been completed.',
+        );
+        return;
+      }
+
+      setReceipt(data);
+    } catch {
+      setReceipt(null);
+      setMessage(
+        `Could not connect to the backend. Check your internet connection and API URL: ${API_BASE_URL}`,
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, [rideId]);
+
+  useEffect(() => {
+    fetchReceipt();
+  }, [fetchReceipt]);
+
+  function formatDate(value?: string) {
+    if (!value) {
+      return 'Not available';
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    return date.toLocaleString();
+  }
+
+  function formatMoney(value: string | number) {
+    const amount = Number(value);
+
+    if (Number.isNaN(amount)) {
+      return `K${value}`;
+    }
+
+    return `K${amount.toFixed(2)}`;
+  }
+
+  function formatStatus(value: string) {
+    return value.replaceAll('_', ' ');
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Ride Receipt</Text>
+
+      <Text style={styles.subtitle}>
+        Your completed ride receipt loads automatically.
+      </Text>
+
+      {isLoading ? (
+        <View style={styles.loadingCard}>
+          <ActivityIndicator size="large" />
+
+          <Text style={styles.loadingText}>
+            Loading your receipt...
+          </Text>
+        </View>
+      ) : null}
+
+      {!isLoading && message ? (
+        <View style={styles.messageBox}>
+          <Text style={styles.messageText}>
+            {message}
+          </Text>
+
+          {rideId ? (
+            <TouchableOpacity
+              style={styles.retryButton}
+              onPress={fetchReceipt}
+            >
+              <Text style={styles.retryButtonText}>
+                Try Again
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            onPress={() => router.replace('/request-ride')}
+          >
+            <Text style={styles.secondaryButtonText}>
+              Return to Ride Request
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
+      {!isLoading && receipt ? (
+        <View style={styles.card}>
+          <Text style={styles.receiptTitle}>
+            Joy Ride Receipt
+          </Text>
+
+          <Text style={styles.receiptNumber}>
+            Receipt {receipt.settlement.receiptNumber}
+          </Text>
+
+          <View style={styles.divider} />
+
+          <View style={styles.statusBadge}>
+            <Text style={styles.status}>
+              {formatStatus(receipt.rideStatus)}
+            </Text>
+          </View>
+
+          <Text style={styles.sectionTitle}>
+            Rider
+          </Text>
+
+          <Text style={styles.detailPrimary}>
+            {receipt.riderName}
+          </Text>
+
+          <Text style={styles.detailSecondary}>
+            {receipt.riderPhone}
+          </Text>
+
+          <View style={styles.divider} />
+
+          <Text style={styles.detailLabel}>
+            Pickup
+          </Text>
+
+          <Text style={styles.detailPrimary}>
+            {receipt.pickupLabel || 'Pickup location'}
+          </Text>
+
+          <Text style={styles.detailSecondary}>
+            {receipt.pickupAddress || 'Address unavailable'}
+          </Text>
+
+          <View style={styles.routeLine} />
+
+          <Text style={styles.detailLabel}>
+            Drop-off
+          </Text>
+
+          <Text style={styles.detailPrimary}>
+            {receipt.dropoffLabel || 'Drop-off location'}
+          </Text>
+
+          <Text style={styles.detailSecondary}>
+            {receipt.dropoffAddress || 'Address unavailable'}
+          </Text>
+
+          <View style={styles.divider} />
+
+          {receipt.driver ? (
+            <>
+              <Text style={styles.sectionTitle}>
+                Driver
+              </Text>
+
+              <Text style={styles.detailPrimary}>
+                {receipt.driver.fullName}
+              </Text>
+
+              <Text style={styles.detailSecondary}>
+                {receipt.driver.phone}
+              </Text>
+            </>
+          ) : null}
+
+          {receipt.vehicle ? (
+            <>
+              <Text style={styles.detailLabel}>
+                Vehicle
+              </Text>
+
+              <Text style={styles.detailPrimary}>
+                {receipt.vehicle.color}{' '}
+                {receipt.vehicle.make}{' '}
+                {receipt.vehicle.model}
+              </Text>
+
+              <Text style={styles.detailSecondary}>
+                Plate: {receipt.vehicle.plateNumber}
+              </Text>
+            </>
+          ) : null}
+
+          {receipt.serviceZone ? (
+            <>
+              <Text style={styles.detailLabel}>
+                Service Zone
+              </Text>
+
+              <Text style={styles.detailPrimary}>
+                {receipt.serviceZone.name}
+              </Text>
+            </>
+          ) : null}
+
+          <View style={styles.divider} />
+
+          <Text style={styles.sectionTitle}>
+            Payment Summary
+          </Text>
+
+          <View style={styles.amountRow}>
+            <Text style={styles.amountLabel}>
+              Final Fare
+            </Text>
+
+            <Text style={styles.fareValue}>
+              {formatMoney(receipt.settlement.finalFare)}
+            </Text>
+          </View>
+
+          <View style={styles.amountRow}>
+            <Text style={styles.amountLabel}>
+              Settlement Status
+            </Text>
+
+            <Text style={styles.amountValue}>
+              {formatStatus(receipt.settlement.status)}
+            </Text>
+          </View>
+
+          <View style={styles.divider} />
+
+          <Text style={styles.detailLabel}>
+            Ride Requested
+          </Text>
+
+          <Text style={styles.detailSecondary}>
+            {formatDate(receipt.requestedAt)}
+          </Text>
+
+          <Text style={styles.detailLabel}>
+            Ride Completed
+          </Text>
+
+          <Text style={styles.detailSecondary}>
+            {formatDate(receipt.completedAt)}
+          </Text>
+
+          <Text style={styles.footerNote}>
+            Thank you for riding with Joy Ride.
+          </Text>
+        </View>
+      ) : null}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    padding: 24,
+    paddingTop: 48,
+    backgroundColor: '#f8fafc',
+  },
+
+  title: {
+    fontSize: 30,
+    fontWeight: '900',
+    color: '#0f172a',
+    textAlign: 'center',
+  },
+
+  subtitle: {
+    marginTop: 8,
+    marginBottom: 24,
+    fontSize: 16,
+    lineHeight: 23,
+    color: '#64748b',
+    textAlign: 'center',
+  },
+
+  loadingCard: {
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 18,
+    padding: 30,
+  },
+
+  loadingText: {
+    marginTop: 14,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#475569',
+  },
+
+  messageBox: {
+    backgroundColor: '#fff7ed',
+    borderWidth: 1,
+    borderColor: '#fdba74',
+    borderRadius: 16,
+    padding: 18,
+  },
+
+  messageText: {
+    color: '#9a3412',
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '700',
+  },
+
+  retryButton: {
+    marginTop: 16,
+    backgroundColor: '#2563eb',
+    borderRadius: 12,
+    paddingVertical: 13,
+  },
+
+  retryButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+
+  secondaryButton: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderRadius: 12,
+    paddingVertical: 13,
+    backgroundColor: '#ffffff',
+  },
+
+  secondaryButtonText: {
+    color: '#334155',
+    fontSize: 15,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 18,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginBottom: 40,
+  },
+
+  receiptTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#0f172a',
+    textAlign: 'center',
+  },
+
+  receiptNumber: {
+    marginTop: 6,
+    fontSize: 14,
+    color: '#475569',
+    textAlign: 'center',
+    fontWeight: '700',
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: '#e2e8f0',
+    marginVertical: 18,
+  },
+
+  statusBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#dcfce7',
+    borderWidth: 1,
+    borderColor: '#86efac',
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    marginBottom: 8,
+  },
+
+  status: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#166534',
+  },
+
+  sectionTitle: {
+    fontSize: 19,
+    fontWeight: '900',
+    color: '#0f172a',
+    marginBottom: 8,
+  },
+
+  detailLabel: {
+    marginTop: 12,
+    marginBottom: 4,
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#64748b',
+    letterSpacing: 0.7,
+    textTransform: 'uppercase',
+  },
+
+  detailPrimary: {
+    fontSize: 17,
+    lineHeight: 23,
+    color: '#0f172a',
+    fontWeight: '800',
+  },
+
+  detailSecondary: {
+    marginTop: 2,
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#475569',
+  },
+
+  routeLine: {
+    width: 3,
+    height: 25,
+    marginVertical: 5,
+    marginLeft: 6,
+    borderRadius: 10,
+    backgroundColor: '#bfdbfe',
+  },
+
+  amountRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 12,
+    marginBottom: 14,
+  },
+
+  amountLabel: {
+    flex: 1,
+    fontSize: 16,
+    color: '#334155',
+    fontWeight: '700',
+  },
+
+  amountValue: {
+    flexShrink: 1,
+    fontSize: 16,
+    color: '#0f172a',
+    fontWeight: '900',
+    textAlign: 'right',
+  },
+
+  fareValue: {
+    fontSize: 21,
+    color: '#166534',
+    fontWeight: '900',
+  },
+
+  footerNote: {
+    marginTop: 24,
+    textAlign: 'center',
+    color: '#475569',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+});
+
+==================================================
+FILE: .\joy-ride-rider-app\hooks\use-ride-driver-location.ts
+==================================================
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+
+const API_BASE_URL = (
+  process.env.EXPO_PUBLIC_API_BASE_URL ??
+  'https://explore-png-api.onrender.com'
+).replace(/\/+$/, '');
+
+const DEFAULT_POLL_INTERVAL_MS = 5000;
+
+export type RideDriverLocation = {
+  rideId: string;
+  driverId: string;
+  latitude: number;
+  longitude: number;
+  accuracy: number | null;
+  heading: number | null;
+  speed: number | null;
+  recordedAt: string;
+  isFresh: boolean;
+};
+
+type UseRideDriverLocationOptions = {
+  rideId?: string | null;
+  enabled: boolean;
+  pollIntervalMs?: number;
+};
+
+type UseRideDriverLocationResult = {
+  location: RideDriverLocation | null;
+  isLoading: boolean;
+  error: string | null;
+  refresh: () => Promise<void>;
+};
+
+function asNullableNumber(value: unknown) {
+  return typeof value === 'number' &&
+    Number.isFinite(value)
+    ? value
+    : null;
+}
+
+function parseDriverLocation(
+  value: unknown,
+): RideDriverLocation | null {
+  if (
+    !value ||
+    typeof value !== 'object'
+  ) {
+    return null;
+  }
+
+  const candidate = value as Record<string, unknown>;
+
+  const latitude = asNullableNumber(
+    candidate.latitude,
+  );
+  const longitude = asNullableNumber(
+    candidate.longitude,
+  );
+
+  if (
+    latitude == null ||
+    longitude == null ||
+    typeof candidate.rideId !== 'string' ||
+    typeof candidate.driverId !== 'string' ||
+    typeof candidate.recordedAt !== 'string'
+  ) {
+    return null;
+  }
+
+  return {
+    rideId: candidate.rideId,
+    driverId: candidate.driverId,
+    latitude,
+    longitude,
+    accuracy: asNullableNumber(
+      candidate.accuracy,
+    ),
+    heading: asNullableNumber(
+      candidate.heading,
+    ),
+    speed: asNullableNumber(
+      candidate.speed,
+    ),
+    recordedAt: candidate.recordedAt,
+    isFresh: candidate.isFresh === true,
+  };
+}
+
+export function useRideDriverLocation({
+  rideId,
+  enabled,
+  pollIntervalMs = DEFAULT_POLL_INTERVAL_MS,
+}: UseRideDriverLocationOptions): UseRideDriverLocationResult {
+  const [location, setLocation] =
+    useState<RideDriverLocation | null>(null);
+  const [isLoading, setIsLoading] =
+    useState(false);
+  const [error, setError] =
+    useState<string | null>(null);
+
+  const abortControllerRef =
+    useRef<AbortController | null>(null);
+  const requestInFlightRef =
+    useRef(false);
+
+  const refresh = useCallback(async () => {
+    const cleanRideId = rideId?.trim();
+
+    if (
+      !enabled ||
+      !cleanRideId ||
+      requestInFlightRef.current
+    ) {
+      return;
+    }
+
+    requestInFlightRef.current = true;
+
+    abortControllerRef.current?.abort();
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/rides/${encodeURIComponent(
+          cleanRideId,
+        )}/location`,
+        {
+          signal: controller.signal,
+        },
+      );
+
+      /*
+       * A 404 is expected for a short period when:
+       * - a Driver has only just been assigned, or
+       * - that Driver has not sent the first GPS ping yet.
+       *
+       * Do not turn that normal transitional state into a
+       * Rider-facing error.
+       */
+      if (response.status === 404) {
+        setError(null);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          `Driver location request failed (${response.status}).`,
+        );
+      }
+
+      const data: unknown = await response.json();
+      const parsed = parseDriverLocation(data);
+
+      if (!parsed) {
+        throw new Error(
+          'Driver location response was invalid.',
+        );
+      }
+
+      setLocation(parsed);
+      setError(null);
+    } catch (caught) {
+      if (
+        caught instanceof Error &&
+        caught.name === 'AbortError'
+      ) {
+        return;
+      }
+
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : 'Could not load the Driver location.',
+      );
+    } finally {
+      if (
+        abortControllerRef.current === controller
+      ) {
+        abortControllerRef.current = null;
+      }
+
+      requestInFlightRef.current = false;
+      setIsLoading(false);
+    }
+  }, [enabled, rideId]);
+
+  useEffect(() => {
+    if (!enabled || !rideId?.trim()) {
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = null;
+      requestInFlightRef.current = false;
+
+      setLocation(null);
+      setError(null);
+      setIsLoading(false);
+
+      return;
+    }
+
+    void refresh();
+
+    const interval = setInterval(() => {
+      void refresh();
+    }, pollIntervalMs);
+
+    return () => {
+      clearInterval(interval);
+
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = null;
+      requestInFlightRef.current = false;
+    };
+  }, [
+    enabled,
+    pollIntervalMs,
+    refresh,
+    rideId,
+  ]);
+
+  return {
+    location,
+    isLoading,
+    error,
+    refresh,
+  };
+}
+
+==================================================
+FILE: .\explore-png-api\src\rider-auth\rider-auth.controller.ts
+==================================================
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { RiderLoginDto } from './dto/rider-login.dto';
+import { RiderRegisterDto } from './dto/rider-register.dto';
+import { RiderAuthService } from './rider-auth.service';
+
+@Controller('rider-auth')
+export class RiderAuthController {
+  constructor(private readonly riderAuthService: RiderAuthService) {}
+
+  @Post('register')
+  @UseGuards(ThrottlerGuard)
+  register(@Body() dto: RiderRegisterDto) {
+    return this.riderAuthService.register(dto);
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(ThrottlerGuard)
+  login(@Body() dto: RiderLoginDto) {
+    return this.riderAuthService.login(dto);
+  }
+}
+
+==================================================
+FILE: .\explore-png-api\src\rider-auth\rider-auth.service.ts
+==================================================
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Prisma } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'crypto';
+import { PrismaService } from '../prisma/prisma.service';
+import { RiderLoginDto } from './dto/rider-login.dto';
+import { RiderRegisterDto } from './dto/rider-register.dto';
+
+const ACCESS_TOKEN_LIFETIME_SECONDS = 12 * 60 * 60;
+const PASSWORD_HASH_ROUNDS = 12;
+
+@Injectable()
+export class RiderAuthService {
+  private readonly dummyPasswordHash = bcrypt.hash(
+    randomBytes(32).toString('hex'),
+    PASSWORD_HASH_ROUNDS,
+  );
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async register(dto: RiderRegisterDto) {
+    const fullName = dto.fullName.trim();
+    const phone = dto.phone.trim();
+    const email = dto.email?.trim().toLowerCase();
+
+    if (!fullName) {
+      throw new BadRequestException('Rider full name is required');
+    }
+
+    const existingAccount = await this.prisma.riderAccount.findFirst({
+      where: {
+        OR: [{ phone }, ...(email ? [{ email }] : [])],
+      },
+      select: {
+        phone: true,
+        email: true,
+      },
+    });
+
+    if (existingAccount) {
+      throw new ConflictException(
+        'A Rider account already exists for that phone or email',
+      );
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, PASSWORD_HASH_ROUNDS);
+
+    try {
+      const rider = await this.prisma.riderAccount.create({
+        data: {
+          fullName,
+          phone,
+          email,
+          passwordHash,
+        },
+      });
+
+      return this.issueAccessToken(rider);
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          'A Rider account already exists for that phone or email',
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  async login(dto: RiderLoginDto) {
+    const phone = dto.phone.trim();
+
+    const rider = await this.prisma.riderAccount.findUnique({
+      where: {
+        phone,
+      },
+    });
+
+    const passwordHash = rider?.passwordHash ?? (await this.dummyPasswordHash);
+
+    const passwordMatches = await bcrypt.compare(dto.password, passwordHash);
+
+    if (!rider || !rider.isActive || !passwordMatches) {
+      throw new UnauthorizedException('Invalid Rider credentials');
+    }
+
+    const updatedRider = await this.prisma.riderAccount.update({
+      where: {
+        id: rider.id,
+      },
+      data: {
+        lastLoginAt: new Date(),
+      },
+    });
+
+    return this.issueAccessToken(updatedRider);
+  }
+
+  private async issueAccessToken(rider: {
+    id: string;
+    fullName: string;
+    phone: string;
+    email: string | null;
+    tokenVersion: number;
+  }) {
+    const accessToken = await this.jwtService.signAsync({
+      sub: rider.id,
+      phone: rider.phone,
+      tokenVersion: rider.tokenVersion,
+      tokenType: 'rider-access',
+    });
+
+    return {
+      accessToken,
+      tokenType: 'Bearer',
+      expiresInSeconds: ACCESS_TOKEN_LIFETIME_SECONDS,
+      rider: {
+        id: rider.id,
+        fullName: rider.fullName,
+        phone: rider.phone,
+        email: rider.email,
+      },
+    };
+  }
+}
+
+==================================================
+FILE: .\explore-png-api\src\rider-auth\dto\rider-register.dto.ts
+==================================================
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+
+export class RiderRegisterDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  fullName: string;
+
+  @IsString()
+  @Matches(/^\+[1-9]\d{7,14}$/, {
+    message: 'phone must use international format, for example +67570000000',
+  })
+  phone: string;
+
+  @IsOptional()
+  @IsEmail()
+  @MaxLength(254)
+  email?: string;
+
+  @IsString()
+  @MinLength(12)
+  @MaxLength(128)
+  password: string;
+}
+
+==================================================
+FILE: .\explore-png-api\src\rider-auth\dto\rider-login.dto.ts
+==================================================
+import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
+
+export class RiderLoginDto {
+  @IsString()
+  @Matches(/^\+[1-9]\d{7,14}$/, {
+    message: 'phone must use international format, for example +67570000000',
+  })
+  phone: string;
+
+  @IsString()
+  @MinLength(12)
+  @MaxLength(128)
+  password: string;
+}
+
+==================================================
+FILE: .\explore-png-api\src\driver-auth\driver-auth.controller.ts
+==================================================
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { AdminApiKeyGuard } from '../common/guards/admin-api-key.guard';
+import { DriverAuthService } from './driver-auth.service';
+import { DriverLoginDto } from './dto/driver-login.dto';
+import { SetDriverCredentialsDto } from './dto/set-driver-credentials.dto';
+
+@Controller('driver-auth')
+export class DriverAuthController {
+  constructor(private readonly driverAuthService: DriverAuthService) {}
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(ThrottlerGuard)
+  login(@Body() dto: DriverLoginDto) {
+    return this.driverAuthService.login(dto);
+  }
+
+  @Patch(':driverId/credentials')
+  @UseGuards(AdminApiKeyGuard)
+  setCredentials(
+    @Param('driverId') driverId: string,
+    @Body() dto: SetDriverCredentialsDto,
+  ) {
+    return this.driverAuthService.setCredentials(driverId, dto);
+  }
+}
+
+==================================================
+FILE: .\explore-png-api\src\driver-auth\driver-auth.service.ts
+==================================================
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { DriverStatus } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'crypto';
+import { PrismaService } from '../prisma/prisma.service';
+import { DriverLoginDto } from './dto/driver-login.dto';
+import { SetDriverCredentialsDto } from './dto/set-driver-credentials.dto';
+
+const ACCESS_TOKEN_LIFETIME_SECONDS = 12 * 60 * 60;
+const PASSWORD_HASH_ROUNDS = 12;
+
+@Injectable()
+export class DriverAuthService {
+  private readonly dummyPasswordHash = bcrypt.hash(
+    randomBytes(32).toString('hex'),
+    PASSWORD_HASH_ROUNDS,
+  );
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async login(dto: DriverLoginDto) {
+    const phone = dto.phone.trim();
+
+    const driver = await this.prisma.driver.findUnique({
+      where: {
+        phone,
+      },
+    });
+
+    const passwordHash = driver?.passwordHash ?? (await this.dummyPasswordHash);
+
+    const passwordMatches = await bcrypt.compare(dto.password, passwordHash);
+
+    if (
+      !driver ||
+      driver.status !== DriverStatus.APPROVED ||
+      !driver.isAuthActive ||
+      !driver.passwordHash ||
+      !passwordMatches
+    ) {
+      throw new UnauthorizedException('Invalid Driver credentials');
+    }
+
+    const updatedDriver = await this.prisma.driver.update({
+      where: {
+        id: driver.id,
+      },
+      data: {
+        lastLoginAt: new Date(),
+      },
+    });
+
+    return this.issueAccessToken(updatedDriver);
+  }
+
+  async setCredentials(driverId: string, dto: SetDriverCredentialsDto) {
+    const driver = await this.prisma.driver.findUnique({
+      where: {
+        id: driverId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!driver) {
+      throw new NotFoundException('Driver not found');
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, PASSWORD_HASH_ROUNDS);
+
+    const updatedDriver = await this.prisma.driver.update({
+      where: {
+        id: driverId,
+      },
+      data: {
+        passwordHash,
+        isAuthActive: true,
+        tokenVersion: {
+          increment: 1,
+        },
+      },
+      select: {
+        id: true,
+        fullName: true,
+        phone: true,
+        email: true,
+        status: true,
+        isAuthActive: true,
+        tokenVersion: true,
+      },
+    });
+
+    return {
+      credentialsUpdated: true,
+      driver: updatedDriver,
+    };
+  }
+
+  private async issueAccessToken(driver: {
+    id: string;
+    fullName: string;
+    phone: string;
+    email: string | null;
+    tokenVersion: number;
+  }) {
+    const accessToken = await this.jwtService.signAsync({
+      sub: driver.id,
+      phone: driver.phone,
+      tokenVersion: driver.tokenVersion,
+      tokenType: 'driver-access',
+    });
+
+    return {
+      accessToken,
+      tokenType: 'Bearer',
+      expiresInSeconds: ACCESS_TOKEN_LIFETIME_SECONDS,
+      driver: {
+        id: driver.id,
+        fullName: driver.fullName,
+        phone: driver.phone,
+        email: driver.email,
+      },
+    };
+  }
+}
+
+==================================================
+FILE: .\explore-png-api\src\driver-auth\dto\driver-login.dto.ts
+==================================================
+import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
+
+export class DriverLoginDto {
+  @IsString()
+  @Matches(/^\+[1-9]\d{7,14}$/, {
+    message: 'phone must use international format, for example +67570000000',
+  })
+  phone: string;
+
+  @IsString()
+  @MinLength(12)
+  @MaxLength(128)
+  password: string;
+}
+

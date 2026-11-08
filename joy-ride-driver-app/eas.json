@@ -1,0 +1,62 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "autoIncrement": true,
+      "android": {
+        "buildType": "apk"
+      },
+      "channel": "preview",
+      "environment": "preview"
+    },
+    "production": {
+      "autoIncrement": true,
+      "channel": "production",
+      "environment": "production"
+    },
+    "background-gps": {
+      "extends": "preview",
+      "distribution": "internal",
+      "environment": "preview",
+      "channel": "background-gps-v1",
+      "autoIncrement": true,
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "safety-test": {
+      "distribution": "internal",
+      "developmentClient": false,
+      "environment": "preview",
+      "channel": "joyride-safety-test-v1",
+      "autoIncrement": false,
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://joyride-safety-test-api.onrender.com",
+        "EXPO_PUBLIC_JOYRIDE_VARIANT": "safety-test",
+        "EXPO_NO_DOTENV": "1"
+      }
+    },
+    "pilot-production": {
+      "distribution": "internal",
+      "developmentClient": false,
+      "environment": "production",
+      "channel": "joyride-pilot-production-v1",
+      "autoIncrement": true,
+      "android": {
+        "buildType": "apk",
+        "credentialsSource": "remote"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://explore-png-api.onrender.com",
+        "EXPO_NO_DOTENV": "1"
+      }
+    }
+  }
+}

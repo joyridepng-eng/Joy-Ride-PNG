@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "**/*spec.ts",
+    "prisma/seed.tourism.backup.ts",
+    "_src_explore_png_backup_unused",
+    "_src_explore_png_backup_unused/**/*"
+  ]
+}

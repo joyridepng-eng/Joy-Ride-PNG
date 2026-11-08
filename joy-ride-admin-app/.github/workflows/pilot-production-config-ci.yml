@@ -1,0 +1,24 @@
+name: Pilot production configuration
+on:
+  pull_request: null
+  push:
+    branches:
+      - master
+permissions:
+  contents: read
+jobs:
+  verify:
+    name: Verify production pilot APK configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node tools/verify-pilot-production.cjs
+      - run: node tools/verify-safety-test-config.cjs
+      - run: npx tsc --noEmit
+      - run: npx eslint config/with-pilot-production.cjs tools/verify-pilot-production.cjs --max-warnings=0
+    timeout-minutes: 15

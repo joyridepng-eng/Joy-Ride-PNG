@@ -1,0 +1,56 @@
+name: joy-ride-driver-app CI
+on:
+  push: null
+  pull_request: null
+  workflow_dispatch: null
+permissions:
+  contents: read
+jobs:
+  checks:
+    name: TypeScript and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Check source encoding and conflict markers
+        run: node tools/verify-source-hygiene.cjs
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Check TypeScript
+        run: npx tsc --noEmit
+      - name: Run lint
+        run: npx eslint . --ignore-pattern "backups/**" --max-warnings 0
+      - name: Test GPS start, resume, and session isolation
+        run: node tools/verify-gps-resume.cjs
+      - name: Test road routing and request recovery
+        run: node tools/verify-road-route.cjs
+      - name: 'Regression check: verify-driver-local-gps.cjs'
+        run: node tools/verify-driver-local-gps.cjs
+      - name: Verify Takings refresh and date rollover
+        run: node tools/verify-takings-refresh.cjs
+      - name: Verify PNG Driver phone input
+        run: node tools/verify-driver-phone.cjs
+      - name: Verify offline telemetry queue recovery
+        run: node tools/verify-offline-telemetry.cjs
+      - name: Verify offline telemetry authentication and lifecycle
+        run: node tools/verify-offline-telemetry-wrapper.cjs
+      - name: Verify telemetry warning and bounded manual retry
+        run: node tools/verify-telemetry-sync-notice.cjs
+      - name: Verify patched URI decoder
+        run: node tools/verify-uri-decoder.cjs
+      - name: Verify PostCSS compatibility
+        run: node tools/verify-postcss-compat.cjs
+      - name: Verify image-size compatibility
+        run: node tools/verify-image-size-compat.cjs
+      - name: Verify patched UUID consumer compatibility
+        run: node tools/verify-uuid-compat.cjs

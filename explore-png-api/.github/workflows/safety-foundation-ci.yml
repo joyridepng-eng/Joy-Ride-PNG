@@ -1,0 +1,52 @@
+name: Safety foundation CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  postgres-safety-foundation:
+    name: PostgreSQL 18 safety foundation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_DB: joyride_safety_ci
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 127.0.0.1:54330:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d joyride_safety_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://ci@127.0.0.1:54330/joyride_safety_ci?schema=public
+      JOYRIDE_SAFETY_DB_TEST: "1"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Build backend for real feedback service tests
+        run: npm run build
+      - name: Check test runner syntax
+        run: node --check tools/verify-safety-foundation.cjs
+      - name: Apply draft SQL and verify database constraints
+        run: node tools/verify-safety-foundation.cjs

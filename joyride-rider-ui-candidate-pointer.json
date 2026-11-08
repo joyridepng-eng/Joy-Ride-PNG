@@ -1,0 +1,69 @@
+{
+  "candidate": "C:\\Users\\SPDD 01\\Desktop\\explore-png-platform\\joyride-rider-ui-candidate-Z17xX6",
+  "baseline": "e16f8c2848bba889171c63a2e61c6694b4ebee62",
+  "state": "validated",
+  "verifiedAt": "2026-10-25T04:16:40.608Z",
+  "files": [
+    {
+      "file": "app/login.tsx",
+      "sha256": "532e0c9403d3b60de3e4b79e5bc045a7c2e998fde6391450667839330f1e0735"
+    },
+    {
+      "file": "app/register.tsx",
+      "sha256": "a16c67588550378e8633cb260a231338e49ce836a8881b801bcbf593468601e4"
+    },
+    {
+      "file": "components/rider-live-trip-map/rider-live-trip-map.web.tsx",
+      "sha256": "5695dfc67d3a2a64ddbec5778a85bcf107c0dc6affeb9c810891e8e03befaed9"
+    },
+    {
+      "file": "components/rider-live-trip-map/rider-live-trip-map.native.tsx",
+      "sha256": "7c29e18a99179d2c6efc39f2dcad258774aea1b88205775a993c649f3489dfd0"
+    },
+    {
+      "file": "components/request-ride-screen/request-ride-screen.native.tsx",
+      "sha256": "48bd0336e21e047a1502cd9221446717b925dd6d1e3a0f39b42de196265e172f"
+    },
+    {
+      "file": "app/(tabs)/ride-status.tsx",
+      "sha256": "63cb12ed09c504b01b1fc72941c3bcdd4cde83c7295d5ca2995058fafd516608"
+    },
+    {
+      "file": "app/(tabs)/receipt.tsx",
+      "sha256": "33579a21426493ddf3f22ff517fcb13ad1ce12f529bdf140bd40c7e150b68e48"
+    },
+    {
+      "file": "app/(tabs)/index.tsx",
+      "sha256": "ac40c87cf3e57e637bdf4b38a31a26d1916ed9ee5f1a3774b7fd3ad558dd69d0"
+    },
+    {
+      "file": "app/(tabs)/_layout.tsx",
+      "sha256": "d43476a020d981969378827cceadb1e55934efc5dbe3138a6731c20e4be3bf3a"
+    },
+    {
+      "file": "services/png-rider-phone.ts",
+      "sha256": "048085b58c9003368ac11300515d0543bfe5153e810acdb257d522748e69b880"
+    },
+    {
+      "file": "tools/verify-rider-phone.cjs",
+      "sha256": "92688b70642157e765707cee12c4503b6b55a8785773a9baa78f6d5cd115f534"
+    },
+    {
+      "file": ".github/workflows/app-ci.yml",
+      "sha256": "e6e671baa24ab00b020157e751c2071207ffde9721bc02b95db4349932364d28"
+    }
+  ],
+  "exports": [
+    {
+      "platform": "android",
+      "folder": "joyride-rider-ui-android-PDZ2ff",
+      "verifiedFiles": 9
+    },
+    {
+      "platform": "web",
+      "folder": "joyride-rider-ui-web-eeKLXN",
+      "verifiedFiles": 8
+    }
+  ],
+  "phoneChecks": 20
+}

@@ -1,0 +1,1290 @@
+=== PRISMA MODELS AND ENUMS ===
+enum DriverStatus {
+enum VehicleStatus {
+enum ServiceStatus {
+enum ServiceZoneKind {
+enum RideType {
+enum RideStatus {
+enum RideSettlementStatus {
+enum AdminRole {
+model AdminAccount {
+model Province {
+model Location {
+model Destination {
+model Experience {
+model Driver {
+model Vehicle {
+model ServiceZone {
+model Ride {
+model RideSettlement {
+model DriverLocation {
+model DriverLocationHistory {
+
+=== .\explore-png-api\src\admin-auth\admin-auth.controller.ts ===
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { AdminAuthService } from './admin-auth.service';
+import { AdminLoginDto } from './dto/admin-login.dto';
+
+@Controller('admin-auth')
+export class AdminAuthController {
+  constructor(private readonly adminAuthService: AdminAuthService) {}
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(ThrottlerGuard)
+  login(@Body() dto: AdminLoginDto) {
+    return this.adminAuthService.login(dto);
+  }
+}
+
+=== .\explore-png-api\src\admin-auth\admin-auth.service.ts ===
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'crypto';
+import { PrismaService } from '../prisma/prisma.service';
+import { AdminLoginDto } from './dto/admin-login.dto';
+
+const ACCESS_TOKEN_LIFETIME_SECONDS = 15 * 60;
+
+@Injectable()
+export class AdminAuthService {
+  private readonly dummyPasswordHash = bcrypt.hash(
+    randomBytes(32).toString('hex'),
+    12,
+  );
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async login(dto: AdminLoginDto) {
+    const email = dto.email.trim().toLowerCase();
+
+    const admin = await this.prisma.adminAccount.findUnique({
+      where: { email },
+    });
+
+    const passwordHash = admin?.passwordHash ?? (await this.dummyPasswordHash);
+
+    const passwordMatches = await bcrypt.compare(dto.password, passwordHash);
+
+    if (!admin || !admin.isActive || !passwordMatches) {
+      throw new UnauthorizedException('Invalid administrator credentials');
+    }
+
+    await this.prisma.adminAccount.update({
+      where: { id: admin.id },
+      data: { lastLoginAt: new Date() },
+    });
+
+    const accessToken = await this.jwtService.signAsync({
+      sub: admin.id,
+      email: admin.email,
+      role: admin.role,
+      tokenVersion: admin.tokenVersion,
+      tokenType: 'admin-access',
+    });
+
+    return {
+      accessToken,
+      tokenType: 'Bearer',
+      expiresInSeconds: ACCESS_TOKEN_LIFETIME_SECONDS,
+      admin: {
+        id: admin.id,
+        email: admin.email,
+        fullName: admin.fullName,
+        role: admin.role,
+      },
+    };
+  }
+}
+
+=== .\explore-png-api\src\admin-auth\admin-auth.module.ts ===
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { minutes, ThrottlerModule } from '@nestjs/throttler';
+import { PrismaModule } from '../prisma/prisma.module';
+import { AdminAuthController } from './admin-auth.controller';
+import { AdminAuthService } from './admin-auth.service';
+import { AdminJwtAuthGuard } from './guards/admin-jwt-auth/admin-jwt-auth.guard';
+
+@Module({
+  imports: [
+    PrismaModule,
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: minutes(1),
+        limit: 5,
+        blockDuration: minutes(5),
+      },
+    ]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.getOrThrow<string>('ADMIN_JWT_SECRET'),
+        signOptions: {
+          expiresIn: '15m',
+        },
+      }),
+    }),
+  ],
+  controllers: [AdminAuthController],
+  providers: [AdminAuthService, AdminJwtAuthGuard],
+  exports: [AdminAuthService, AdminJwtAuthGuard, JwtModule],
+})
+export class AdminAuthModule {}
+
+=== .\explore-png-api\src\admin-auth\guards\admin-jwt-auth\admin-jwt-auth.guard.ts ===
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { AdminRole } from '@prisma/client';
+import { Request } from 'express';
+import { PrismaService } from '../../../prisma/prisma.service';
+
+type AdminAccessTokenPayload = {
+  sub: string;
+  email: string;
+  role: AdminRole;
+  tokenVersion: number;
+  tokenType: 'admin-access';
+};
+
+export type AuthenticatedAdmin = {
+  id: string;
+  email: string;
+  fullName: string;
+  role: AdminRole;
+};
+
+export type AdminAuthenticatedRequest = Request & {
+  admin?: AuthenticatedAdmin;
+};
+
+@Injectable()
+export class AdminJwtAuthGuard implements CanActivate {
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context
+      .switchToHttp()
+      .getRequest<AdminAuthenticatedRequest>();
+
+    const authorization = request.header('authorization');
+
+    if (!authorization?.startsWith('Bearer ')) {
+      throw new UnauthorizedException(
+        'Administrator authentication is required',
+      );
+    }
+
+    const token = authorization.slice('Bearer '.length).trim();
+
+    if (!token) {
+      throw new UnauthorizedException('Administrator authentication failed');
+    }
+
+    try {
+      const payload =
+        await this.jwtService.verifyAsync<AdminAccessTokenPayload>(token);
+
+      if (
+        payload.tokenType !== 'admin-access' ||
+        !payload.sub ||
+        !Number.isInteger(payload.tokenVersion)
+      ) {
+        throw new UnauthorizedException();
+      }
+
+      const admin = await this.prisma.adminAccount.findUnique({
+        where: { id: payload.sub },
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          role: true,
+          isActive: true,
+          tokenVersion: true,
+        },
+      });
+
+      if (
+        !admin ||
+        !admin.isActive ||
+        admin.tokenVersion !== payload.tokenVersion
+      ) {
+        throw new UnauthorizedException();
+      }
+
+      request.admin = {
+        id: admin.id,
+        email: admin.email,
+        fullName: admin.fullName,
+        role: admin.role,
+      };
+
+      return true;
+    } catch {
+      throw new UnauthorizedException('Administrator authentication failed');
+    }
+  }
+}
+
+=== .\explore-png-api\src\rides\rides.controller.ts ===
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { AdminApiKeyGuard } from '../common/guards/admin-api-key.guard';
+import { AssignDriverDto } from './dto/assign-driver.dto';
+import { CreateRideDto } from './dto/create-ride.dto';
+import { UpdateRideStatusDto } from './dto/update-ride-status.dto';
+import { RidesService } from './rides.service';
+
+@Controller('rides')
+@UseGuards(AdminApiKeyGuard)
+export class RidesController {
+  constructor(private readonly ridesService: RidesService) {}
+
+  @Post()
+  create(@Body() dto: CreateRideDto) {
+    return this.ridesService.create(dto);
+  }
+
+  @Get()
+  findAll(
+    @Query('status') status?: string,
+    @Query('locationId') locationId?: string,
+    @Query('serviceZoneId') serviceZoneId?: string,
+    @Query('driverId') driverId?: string,
+  ) {
+    return this.ridesService.findAll({
+      status,
+      locationId,
+      serviceZoneId,
+      driverId,
+    });
+  }
+
+  @Get('driver/:driverId/active')
+  findActiveDriverRide(@Param('driverId') driverId: string) {
+    return this.ridesService.findActiveDriverRide(driverId);
+  }
+
+  @Get(':id/location')
+  getCurrentLocation(@Param('id') id: string) {
+    return this.ridesService.getCurrentLocation(id);
+  }
+  @Get(':id/settlement')
+  getSettlement(@Param('id') id: string) {
+    return this.ridesService.getSettlement(id);
+  }
+
+  @Patch(':id/settlement/paid')
+  markSettlementPaid(@Param('id') id: string) {
+    return this.ridesService.markSettlementPaid(id);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.ridesService.findOne(id);
+  }
+
+  @Patch(':id/assign-driver')
+  assignDriver(@Param('id') id: string, @Body() dto: AssignDriverDto) {
+    return this.ridesService.assignDriver(id, dto);
+  }
+
+  @Patch(':id/status')
+  updateStatus(@Param('id') id: string, @Body() dto: UpdateRideStatusDto) {
+    return this.ridesService.updateStatus(id, dto);
+  }
+}
+
+=== .\explore-png-api\src\rides\rides.service.ts ===
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Prisma, RideSettlementStatus, RideStatus } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
+import { AssignDriverDto } from './dto/assign-driver.dto';
+import { CreateRideDto } from './dto/create-ride.dto';
+import { UpdateRideStatusDto } from './dto/update-ride-status.dto';
+import { assertRideStatusTransition } from './ride-status.transitions';
+
+@Injectable()
+export class RidesService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  create(dto: CreateRideDto) {
+    return this.prisma.ride.create({
+      data: {
+        rideType: dto.rideType,
+        riderName: dto.riderName,
+        riderPhone: dto.riderPhone,
+
+        locationId:
+          dto.locationId === undefined ? undefined : Number(dto.locationId),
+        serviceZoneId: dto.serviceZoneId,
+
+        pickupLabel: dto.pickupLabel,
+        pickupAddress: dto.pickupAddress,
+        pickupLatitude: dto.pickupLatitude,
+        pickupLongitude: dto.pickupLongitude,
+
+        dropoffLabel: dto.dropoffLabel,
+        dropoffAddress: dto.dropoffAddress,
+        dropoffLatitude: dto.dropoffLatitude,
+        dropoffLongitude: dto.dropoffLongitude,
+
+        scheduledAt: dto.scheduledAt,
+        estimatedFare: dto.estimatedFare,
+        finalFare: dto.finalFare,
+        notes: dto.notes,
+      },
+      include: this.defaultInclude(),
+    });
+  }
+
+  findAll(query?: {
+    status?: string;
+    locationId?: string;
+    serviceZoneId?: string;
+    driverId?: string;
+  }) {
+    return this.prisma.ride.findMany({
+      where: {
+        ...(query?.status ? { status: query.status as RideStatus } : {}),
+        ...(query?.locationId ? { locationId: Number(query.locationId) } : {}),
+        ...(query?.serviceZoneId ? { serviceZoneId: query.serviceZoneId } : {}),
+        ...(query?.driverId ? { driverId: query.driverId } : {}),
+      },
+      orderBy: {
+        requestedAt: 'desc',
+      },
+      include: this.defaultInclude(),
+    });
+  }
+
+  async findActiveDriverRide(driverId: string) {
+    return this.prisma.ride.findFirst({
+      where: {
+        driverId,
+        status: {
+          in: [
+            RideStatus.ACCEPTED,
+            RideStatus.DRIVER_ARRIVED,
+            RideStatus.IN_PROGRESS,
+          ],
+        },
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      select: {
+        id: true,
+        status: true,
+        riderName: true,
+        riderPhone: true,
+        pickupLabel: true,
+        pickupAddress: true,
+        pickupLatitude: true,
+        pickupLongitude: true,
+        dropoffLabel: true,
+        dropoffAddress: true,
+        dropoffLatitude: true,
+        dropoffLongitude: true,
+        estimatedFare: true,
+        finalFare: true,
+        driver: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+          },
+        },
+        vehicle: {
+          select: {
+            id: true,
+            plateNumber: true,
+            make: true,
+            model: true,
+            color: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findOne(id: string) {
+    const ride = await this.prisma.ride.findUnique({
+      where: { id },
+      include: this.defaultInclude(),
+    });
+
+    if (!ride) {
+      throw new NotFoundException('Ride not found');
+    }
+
+    return ride;
+  }
+
+  async getCurrentLocation(id: string) {
+    const ride = await this.prisma.ride.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        driverId: true,
+        driver: {
+          select: {
+            locationPing: true,
+          },
+        },
+      },
+    });
+
+    if (!ride) {
+      throw new NotFoundException('Ride not found');
+    }
+
+    if (!ride.driverId) {
+      throw new NotFoundException('Ride has no assigned driver');
+    }
+
+    const location = ride.driver?.locationPing;
+
+    if (!location) {
+      throw new NotFoundException('Driver location not found');
+    }
+
+    const freshnessThresholdMs = 2 * 60 * 1000;
+    const isFresh =
+      Date.now() - location.recordedAt.getTime() <= freshnessThresholdMs;
+
+    return {
+      rideId: ride.id,
+      driverId: ride.driverId,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      accuracy: location.accuracy,
+      heading: location.heading,
+      speed: location.speed,
+      recordedAt: location.recordedAt,
+      isFresh,
+    };
+  }
+  async assignDriver(id: string, dto: AssignDriverDto) {
+    const ride = await this.findOne(id);
+
+    if (ride.status !== RideStatus.REQUESTED) {
+      throw new BadRequestException(
+        `Driver can only be assigned while ride is REQUESTED. Current status is ${ride.status}`,
+      );
+    }
+
+    if (ride.driverId || ride.vehicleId) {
+      throw new BadRequestException(
+        'Ride already has an assigned driver and vehicle',
+      );
+    }
+
+    const driver = await this.prisma.driver.findUnique({
+      where: {
+        id: dto.driverId,
+      },
+      include: {
+        vehicles: {
+          where: {
+            status: 'ACTIVE',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    if (!driver) {
+      throw new NotFoundException('Driver not found');
+    }
+
+    if (driver.status !== 'APPROVED') {
+      throw new BadRequestException(
+        `Driver is not approved. Current status is ${driver.status}`,
+      );
+    }
+
+    if (!driver.isOnline) {
+      throw new BadRequestException('Driver is not online');
+    }
+
+    if (!driver.isAvailable) {
+      throw new BadRequestException('Driver is not available');
+    }
+
+    if (ride.serviceZoneId && driver.serviceZoneId !== ride.serviceZoneId) {
+      throw new BadRequestException(
+        'Driver is not assigned to the ride service zone',
+      );
+    }
+
+    const activeVehicle = driver.vehicles[0];
+
+    if (!activeVehicle) {
+      throw new BadRequestException('Selected driver has no active vehicle');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      /*
+       * Atomically claim the driver.
+       *
+       * If another assignment claims the same driver first,
+       * this update affects zero records.
+       */
+      const claimedDriver = await tx.driver.updateMany({
+        where: {
+          id: driver.id,
+          status: 'APPROVED',
+          isOnline: true,
+          isAvailable: true,
+        },
+        data: {
+          isAvailable: false,
+        },
+      });
+
+      if (claimedDriver.count !== 1) {
+        throw new BadRequestException(
+          'Driver is no longer available and may have been assigned to another ride',
+        );
+      }
+
+      /*
+       * Atomically claim the ride.
+       *
+       * If another dispatcher assigns this ride first,
+       * this update affects zero records.
+       */
+      const claimedRide = await tx.ride.updateMany({
+        where: {
+          id,
+          status: RideStatus.REQUESTED,
+          driverId: null,
+          vehicleId: null,
+        },
+        data: {
+          driverId: driver.id,
+          vehicleId: activeVehicle.id,
+          status: RideStatus.ACCEPTED,
+        },
+      });
+
+      if (claimedRide.count !== 1) {
+        throw new BadRequestException(
+          'Ride is no longer available for driver assignment',
+        );
+      }
+
+      const assignedRide = await tx.ride.findUnique({
+        where: {
+          id,
+        },
+        include: this.defaultInclude(),
+      });
+
+      if (!assignedRide) {
+        throw new NotFoundException('Ride could not be found after assignment');
+      }
+
+      return assignedRide;
+    });
+  }
+
+  async updateStatus(id: string, dto: UpdateRideStatusDto) {
+    const ride = await this.findOne(id);
+
+    assertRideStatusTransition(ride.status, dto.status);
+
+    const releasingStatuses: RideStatus[] = [
+      RideStatus.COMPLETED,
+      RideStatus.CANCELLED,
+      RideStatus.NO_DRIVER_AVAILABLE,
+    ];
+
+    const driverIdToRelease =
+      ride.driverId && releasingStatuses.includes(dto.status)
+        ? ride.driverId
+        : undefined;
+
+    const shouldCreateSettlement = dto.status === RideStatus.COMPLETED;
+
+    const finalFareAmount = shouldCreateSettlement
+      ? (ride.finalFare ?? ride.estimatedFare)
+      : undefined;
+
+    if (
+      shouldCreateSettlement &&
+      (finalFareAmount === undefined ||
+        finalFareAmount === null ||
+        finalFareAmount <= 0)
+    ) {
+      throw new BadRequestException(
+        'Cannot complete ride without a valid finalFare or estimatedFare',
+      );
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      await tx.ride.update({
+        where: {
+          id,
+        },
+        data: {
+          status: dto.status,
+          notes: dto.notes ?? undefined,
+          ...(shouldCreateSettlement ? { finalFare: finalFareAmount } : {}),
+        },
+      });
+
+      if (shouldCreateSettlement && finalFareAmount) {
+        const finalFareDecimal = new Prisma.Decimal(finalFareAmount);
+
+        const driverShare = finalFareDecimal.times(0.8).toDecimalPlaces(2);
+
+        const companyShare = finalFareDecimal.times(0.2).toDecimalPlaces(2);
+
+        await tx.rideSettlement.upsert({
+          where: {
+            rideId: id,
+          },
+          update: {
+            finalFare: finalFareDecimal,
+            driverShare,
+            companyShare,
+            driverId: ride.driverId,
+            vehicleId: ride.vehicleId,
+            status: RideSettlementStatus.PENDING,
+          },
+          create: {
+            rideId: id,
+            receiptNumber: this.generateReceiptNumber(),
+            driverId: ride.driverId,
+            vehicleId: ride.vehicleId,
+            finalFare: finalFareDecimal,
+            driverShare,
+            companyShare,
+            status: RideSettlementStatus.PENDING,
+          },
+        });
+      }
+
+      if (driverIdToRelease) {
+        await tx.driver.updateMany({
+          where: {
+            id: driverIdToRelease,
+            status: 'APPROVED',
+            isOnline: true,
+          },
+          data: {
+            isAvailable: true,
+          },
+        });
+      }
+
+      return tx.ride.findUnique({
+        where: {
+          id,
+        },
+        include: this.defaultInclude(),
+      });
+    });
+  }
+
+  async getSettlement(id: string) {
+    const ride = await this.prisma.ride.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        settlement: true,
+        driver: true,
+        vehicle: true,
+        serviceZone: true,
+      },
+    });
+
+    if (!ride) {
+      throw new NotFoundException('Ride not found');
+    }
+
+    if (!ride.settlement) {
+      throw new NotFoundException('Ride settlement not found');
+    }
+
+    return {
+      rideId: ride.id,
+      rideStatus: ride.status,
+      riderName: ride.riderName,
+      riderPhone: ride.riderPhone,
+      pickupLabel: ride.pickupLabel,
+      pickupAddress: ride.pickupAddress,
+      dropoffLabel: ride.dropoffLabel,
+      dropoffAddress: ride.dropoffAddress,
+      requestedAt: ride.requestedAt,
+      completedAt: ride.updatedAt,
+
+      driver: ride.driver
+        ? {
+            id: ride.driver.id,
+            fullName: ride.driver.fullName,
+            phone: ride.driver.phone,
+          }
+        : null,
+
+      vehicle: ride.vehicle
+        ? {
+            id: ride.vehicle.id,
+            plateNumber: ride.vehicle.plateNumber,
+            make: ride.vehicle.make,
+            model: ride.vehicle.model,
+            color: ride.vehicle.color,
+          }
+        : null,
+
+      serviceZone: ride.serviceZone
+        ? {
+            id: ride.serviceZone.id,
+            name: ride.serviceZone.name,
+          }
+        : null,
+
+      settlement: ride.settlement,
+    };
+  }
+
+  async markSettlementPaid(id: string) {
+    const ride = await this.findOne(id);
+
+    if (!ride.settlement) {
+      throw new NotFoundException('Ride settlement not found');
+    }
+
+    if (ride.settlement.status !== RideSettlementStatus.PENDING) {
+      throw new BadRequestException(
+        `Only PENDING settlements can be marked as PAID. Current status is ${ride.settlement.status}`,
+      );
+    }
+
+    await this.prisma.rideSettlement.update({
+      where: {
+        rideId: id,
+      },
+      data: {
+        status: RideSettlementStatus.PAID,
+      },
+    });
+
+    return this.findOne(id);
+  }
+
+  private generateReceiptNumber() {
+    const timestamp = Date.now();
+
+    const random = Math.floor(Math.random() * 10000)
+      .toString()
+      .padStart(4, '0');
+
+    return `RCP-${timestamp}-${random}`;
+  }
+
+  private defaultInclude() {
+    return {
+      location: true,
+      serviceZone: true,
+      driver: {
+        include: {
+          locationPing: true,
+          vehicles: true,
+        },
+      },
+      vehicle: true,
+      settlement: true,
+    };
+  }
+}
+
+=== .\explore-png-api\src\rides\dto\create-ride.dto.ts ===
+import { RideType } from '@prisma/client';
+import { Type } from 'class-transformer';
+import {
+  IsDate,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
+
+export class CreateRideDto {
+  @IsEnum(RideType)
+  rideType: RideType;
+
+  @IsOptional()
+  @IsString()
+  riderName?: string;
+
+  @IsOptional()
+  @IsPhoneNumber()
+  riderPhone?: string;
+
+  @IsOptional()
+  @IsString()
+  locationId?: string;
+
+  @IsOptional()
+  @IsString()
+  serviceZoneId?: string;
+
+  @IsOptional()
+  @IsString()
+  driverId?: string;
+
+  @IsOptional()
+  @IsString()
+  vehicleId?: string;
+
+  @IsString()
+  pickupLabel: string;
+
+  @IsOptional()
+  @IsString()
+  pickupAddress?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(-90)
+  @Max(90)
+  pickupLatitude?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(-180)
+  @Max(180)
+  pickupLongitude?: number;
+
+  @IsOptional()
+  @IsString()
+  dropoffLabel?: string;
+
+  @IsOptional()
+  @IsString()
+  dropoffAddress?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(-90)
+  @Max(90)
+  dropoffLatitude?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(-180)
+  @Max(180)
+  dropoffLongitude?: number;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  scheduledAt?: Date;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  estimatedFare?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  finalFare?: number;
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
+}
+
+=== .\explore-png-api\src\rides\dto\update-ride-status.dto.ts ===
+import { RideStatus } from '@prisma/client';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+
+export class UpdateRideStatusDto {
+  @IsEnum(RideStatus)
+  status: RideStatus;
+
+  @IsOptional()
+  @IsString()
+  driverId?: string;
+
+  @IsOptional()
+  @IsString()
+  vehicleId?: string;
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
+}
+
+=== .\explore-png-api\src\app.module.ts ===
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { environmentValidationSchema } from './config/environment.validation';
+import { DriverLocationsModule } from './driver-locations/driver-locations.module';
+import { DriversModule } from './drivers/drivers.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { RidesModule } from './rides/rides.module';
+import { RoutingModule } from './routing/routing.module';
+import { ServiceZonesModule } from './service-zones/service-zones.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
+import { AdminAuthModule } from './admin-auth/admin-auth.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      expandVariables: true,
+      validationSchema: environmentValidationSchema,
+      validationOptions: {
+        abortEarly: false,
+        allowUnknown: true,
+      },
+    }),
+    PrismaModule,
+    ServiceZonesModule,
+    DriversModule,
+    VehiclesModule,
+    DriverLocationsModule,
+    RidesModule,
+    RoutingModule,
+    AdminAuthModule,
+  ],
+})
+export class AppModule {}
+
+=== .\explore-png-api\package.json ===
+{
+  "name": "explore-png-api",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/src/main.js",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "postinstall": "prisma generate",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "deploy:start": "npm run db:migrate:deploy && npm run start:prod",
+    "admin:create": "tsx src/admin-auth/scripts/create-admin.ts",
+    "admin:reset-password": "tsx src/admin-auth/scripts/reset-admin-password.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/jwt": "^11.0.2",
+    "@nestjs/mapped-types": "^2.1.1",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/throttler": "^6.5.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "bcrypt": "^6.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "dotenv": "^17.4.2",
+    "joi": "^18.2.3",
+    "pg": "^8.22.0",
+    "prisma": "^7.8.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.18.0",
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.0.1",
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.20.0",
+    "@types/supertest": "^7.0.0",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.2",
+    "globals": "^17.0.0",
+    "jest": "^30.0.0",
+    "prettier": "^3.4.2",
+    "source-map-support": "^0.5.21",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.22.4",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
+
+=== .\joy-ride-driver-app\package.json ===
+{
+  "name": "joy-ride-driver-app",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "expo start",
+    "reset-project": "node ./scripts/reset-project.js",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "@maplibre/maplibre-react-native": "^11.3.6",
+    "@react-navigation/bottom-tabs": "^7.4.0",
+    "@react-navigation/elements": "^2.6.3",
+    "@react-navigation/native": "^7.1.8",
+    "expo": "~54.0.37",
+    "expo-constants": "~18.0.14",
+    "expo-font": "~14.0.11",
+    "expo-haptics": "~15.0.8",
+    "expo-image": "~3.0.11",
+    "expo-linking": "~8.0.12",
+    "expo-location": "~19.0.8",
+    "expo-router": "~6.0.23",
+    "expo-splash-screen": "~31.0.13",
+    "expo-status-bar": "~3.0.9",
+    "expo-symbols": "~1.0.8",
+    "expo-system-ui": "~6.0.9",
+    "expo-updates": "~29.0.20",
+    "expo-web-browser": "~15.0.11",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-maps": "1.20.1",
+    "react-native-reanimated": "~4.1.1",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.5.1"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "eslint": "^9.25.0",
+    "eslint-config-expo": "~10.0.0",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
+
+=== .\joy-ride-rider-app\package.json ===
+{
+  "name": "joy-ride-rider-app",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "expo start",
+    "reset-project": "node ./scripts/reset-project.js",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "@react-navigation/bottom-tabs": "^7.4.0",
+    "@react-navigation/elements": "^2.6.3",
+    "@react-navigation/native": "^7.1.8",
+    "expo": "~54.0.37",
+    "expo-constants": "~18.0.14",
+    "expo-font": "~14.0.11",
+    "expo-haptics": "~15.0.8",
+    "expo-image": "~3.0.11",
+    "expo-linking": "~8.0.12",
+    "expo-location": "~19.0.8",
+    "expo-router": "~6.0.23",
+    "expo-splash-screen": "~31.0.13",
+    "expo-status-bar": "~3.0.9",
+    "expo-symbols": "~1.0.8",
+    "expo-system-ui": "~6.0.9",
+    "expo-updates": "~29.0.20",
+    "expo-web-browser": "~15.0.11",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-maps": "1.20.1",
+    "react-native-reanimated": "~4.1.1",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.5.1"
+  },
+  "devDependencies": {
+    "@expo/ngrok": "^4.1.3",
+    "@types/react": "~19.1.0",
+    "eslint": "^9.25.0",
+    "eslint-config-expo": "~10.0.0",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
+
+=== PRISMA MODEL: Driver ===
+model Driver {
+  id                           String       @id @default(cuid())
+  userId                       String?
+  fullName                     String
+  phone                        String       @unique
+  email                        String?      @unique
+  licenseNumber                String?      @unique
+  licenseClass                 String?
+  licenseIssuedAt              DateTime?
+  licenseExpiresAt             DateTime?
+  dateOfBirth                  DateTime?
+  emergencyContactName         String?
+  emergencyContactPhone        String?
+  emergencyContactRelationship String?
+  status                       DriverStatus @default(PENDING)
+  approvedAt                   DateTime?
+  approvedBy                   String?
+  suspensionReason             String?
+  isOnline                     Boolean      @default(false)
+  isAvailable                  Boolean      @default(false)
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  serviceZoneId String?
+  serviceZone   ServiceZone? @relation(fields: [serviceZoneId], references: [id])
+
+  vehicles        Vehicle[]
+  rides           Ride[]
+  locationPing    DriverLocation?
+  locationHistory DriverLocationHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+=== PRISMA MODEL: Ride ===
+model Ride {
+  id       String     @id @default(cuid())
+  rideType RideType   @default(STANDARD)
+  status   RideStatus @default(REQUESTED)
+
+  riderName  String?
+  riderPhone String?
+
+  pickupLabel     String?
+  pickupAddress   String?
+  pickupLatitude  Float?
+  pickupLongitude Float?
+
+  dropoffLabel     String?
+  dropoffAddress   String?
+  dropoffLatitude  Float?
+  dropoffLongitude Float?
+
+  estimatedFare Float?
+  finalFare     Float?
+  notes         String?
+  requestedAt   DateTime  @default(now())
+  scheduledAt   DateTime?
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  driverId String?
+  driver   Driver? @relation(fields: [driverId], references: [id])
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+
+  serviceZoneId String?
+  serviceZone   ServiceZone? @relation(fields: [serviceZoneId], references: [id])
+
+  settlement      RideSettlement?
+  locationHistory DriverLocationHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
