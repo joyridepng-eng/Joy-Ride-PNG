@@ -1,8 +1,17 @@
 services:
   - type: web
-    name: joy-ride-png-api
-    runtime: node
+    name: explore-png-api
+    env: node
     rootDir: explore-png-api
     buildCommand: npm install && npm run build
-    startCommand: npm run deploy:start
+    startCommand: node dist/src/main.js
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_JWT_SECRET
+        sync: false
+      - key: RIDER_JWT_SECRET
+        sync: false
+      - key: DRIVER_JWT_SECRET
+        sync: false
     plan: free
